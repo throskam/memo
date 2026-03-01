@@ -1,0 +1,19 @@
+{
+	"name": "memo",
+	"short_name": "memo",
+	"icons": [
+		{
+			"src": "/static/icons/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/static/icons/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"theme_color": "#01AAFF",
+	"background_color": "#11171f",
+	"display": "standalone"
+}

@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-root-ca
+  namespace: cert-manager
+spec:
+  isCA: true
+  commonName: "my-selfsigned-ca"
+  secretName: selfsigned-root-ca-secret
+  issuerRef:
+    name: selfsigned-root
+    kind: ClusterIssuer

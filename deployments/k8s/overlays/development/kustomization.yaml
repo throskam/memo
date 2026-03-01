@@ -1,0 +1,43 @@
+resources:
+  - ../../resources/app
+  - ../../resources/cert-manager
+  - ../../resources/mailhog
+  - ../../resources/pgadmin
+  - ../../resources/postgres
+  - ./namespace.yaml
+
+namespace: development
+
+patches:
+  - path: app-deployment-patch.yaml
+    target:
+      kind: Deployment
+      name: app
+  - target:
+      kind: Ingress
+      name: app
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: app.local
+      - op: add
+        path: /spec/ingressClassName
+        value: nginx
+      - op: add
+        path: /spec/tls
+        value:
+          - hosts:
+              - app.local
+            secretName: app-tls
+  - target:
+      kind: ConfigMap
+      name: app
+    patch: |
+      - op: replace
+        path: /data/APP_BASE_URL
+        value: "https://app.local:1443"
+
+secretGenerator:
+  - name: app
+    envs:
+      - .env

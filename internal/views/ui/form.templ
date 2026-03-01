@@ -1,0 +1,113 @@
+package ui
+
+func describeby(ID string) string {
+	return ID + "-validation"
+}
+
+type InputProps struct {
+	ID                 string
+	Name               string
+	Kind               string
+	Label              string
+	Placeholder        string
+	Value              string
+	ValidationMessages []string
+	Attrs              templ.Attributes
+}
+
+templ Input(props InputProps) {
+	<label for={ props.ID } class="visibly-hidden">
+		{ props.Label }
+	</label>
+	<input
+		id={ props.ID }
+		name={ props.Name }
+		type={ props.Kind }
+		placeholder={ props.Placeholder }
+		value={ props.Value }
+		if len(props.ValidationMessages) > 0 {
+			aria-invalid="true"
+			aria-describe-by={ describeby(props.ID) }
+		}
+		{ props.Attrs... }
+	/>
+	@Validation(ValidationProps{ID: describeby(props.ID), Messages: props.ValidationMessages})
+}
+
+type TextareaProps struct {
+	ID                 string
+	Name               string
+	Label              string
+	Placeholder        string
+	Value              string
+	ValidationMessages []string
+}
+
+templ Textarea(props TextareaProps) {
+	<label for={ props.ID } class="visibly-hidden">
+		{ props.Label }
+	</label>
+	<textarea
+		id={ props.ID }
+		name={ props.Name }
+		placeholder={ props.Placeholder }
+		value={ props.Value }
+		if len(props.ValidationMessages) > 0 {
+			aria-invalid="true"
+			aria-describe-by={ describeby(props.ID) }
+		}
+	></textarea>
+	@Validation(ValidationProps{ID: describeby(props.ID), Messages: props.ValidationMessages})
+}
+
+type PromptProps struct {
+	ID                 string
+	Name               string
+	Kind               string
+	Label              string
+	Placeholder        string
+	Value              string
+	ValidationMessages []string
+	CTA                string
+	Attrs              templ.Attributes
+}
+
+templ Prompt(props PromptProps) {
+	<fieldset role="group">
+		<label for={ props.ID } class="visibly-hidden">
+			{ props.Label }
+		</label>
+		{ children... }
+		<input
+			id={ props.ID }
+			name={ props.Name }
+			type={ props.Kind }
+			placeholder={ props.Placeholder }
+			value={ props.Value }
+			if len(props.ValidationMessages) > 0 {
+				aria-invalid="true"
+				aria-describe-by={ describeby(props.ID) }
+			}
+			{ props.Attrs... }
+		/>
+		<input
+			type="submit"
+			value={ props.CTA }
+		/>
+	</fieldset>
+	@Validation(ValidationProps{ID: describeby(props.ID), Messages: props.ValidationMessages})
+}
+
+type ValidationProps struct {
+	ID       string
+	Messages []string
+}
+
+templ Validation(props ValidationProps) {
+	<small id={ props.ID }>
+		for _, message := range props.Messages {
+			{ message }
+			<br/>
+		}
+	</small>
+}

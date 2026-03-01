@@ -1,0 +1,21 @@
+package ui
+
+import "strconv"
+
+type ErrorPageProps struct {
+	Code  int
+	Title string
+	Text  string
+}
+
+templ ErrorPage(props ErrorPageProps) {
+	@Page() {
+		<div class="error">
+			<h1>{ strconv.Itoa(props.Code) }</h1>
+			<h4>{ props.Title }</h4>
+			if props.Text != "" {
+				<p>{ props.Text }</p>
+			}
+		</div>
+	}
+}

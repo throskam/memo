@@ -1,0 +1,47 @@
+package ui
+
+import "github.com/throskam/ki"
+
+templ Card() {
+	<article class="card">
+		{ children... }
+	</article>
+}
+
+type CardHeaderProps struct {
+	Title string
+}
+
+templ CardHeader(props CardHeaderProps) {
+	<header>
+		<p>{ props.Title }</p>
+		{ children... }
+	</header>
+}
+
+templ CardActions() {
+	<div role="group">
+		{ children... }
+	</div>
+}
+
+type CardActionProps struct {
+	Location ki.Location
+	Attrs    templ.Attributes
+}
+
+templ CardAction(props CardActionProps) {
+	<button { props.Attrs... } hx-swap="outerHTML" hx-target="closest article" { HxAction(props.Location)... }>
+		{ children... }
+	</button>
+}
+
+type CardActionSubmitProps struct {
+	Attrs templ.Attributes
+}
+
+templ CardActionSubmit(props CardActionSubmitProps) {
+	<button { props.Attrs... } type="submit">
+		{ children... }
+	</button>
+}

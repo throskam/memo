@@ -1,0 +1,94 @@
+package ui
+
+import (
+	"github.com/throskam/ki"
+	"github.com/throskam/kix/i18n"
+	"github.com/throskam/memo/internal/lib"
+)
+
+templ Navbar() {
+	{{
+		homePageLocation := lib.GetLocation(ctx, "home:page:get")
+		authPageLocation := lib.GetLocation(ctx, "auth:page:get")
+		profilePageLocation := lib.GetLocation(ctx, "profile:page:get")
+		aboutPageLocation := lib.GetLocation(ctx, "about:page:get")
+		logoutLocation := lib.GetLocation(ctx, "auth:page:logout")
+
+		var user *lib.User
+		username := ""
+		isAuthenticated := true
+
+		user, err := lib.GetUser(ctx)
+		if err != nil {
+			isAuthenticated = false
+		} else {
+			username = user.Username
+		}
+	}}
+	<header>
+		<div class="container">
+			<nav>
+				<ul>
+					<li>
+						<a href={ homePageLocation.URL().String() } hx-boost="true">
+							<strong>Memo</strong>
+						</a>
+					</li>
+				</ul>
+				<ul>
+					<li>
+						<a class="secondary" href={ aboutPageLocation.URL().String() } hx-boost="true">
+							{ i18n.T(ctx, "About us") }
+						</a>
+					</li>
+					<li>
+						if isAuthenticated {
+							<details class="navbar dropdown">
+								<summary id="navbar-username">{ username }</summary>
+								<ul dir="rtl">
+									<li>
+										<a class="secondary" href={ profilePageLocation.URL().String() } hx-boost="true">
+											{ i18n.T(ctx, "Profile") }
+										</a>
+									</li>
+									<li>
+										<form { HxAction(logoutLocation)... }>
+											<button type="submit" class="secondary">
+												{ i18n.T(ctx, "Logout") }
+											</button>
+										</form>
+									</li>
+								</ul>
+							</details>
+						} else {
+							<a class="secondary" href={ authPageLocation.URL().String() } hx-boost="true">
+								{ i18n.T(ctx, "Connect") }
+							</a>
+						}
+					</li>
+					<li>
+						<details
+							class="navbar dropdown"
+							x-data="{
+								setLanguage(lang) {
+									document.cookie = `lang=${lang}; path=/; max-age=31536000; samesite=lax`;
+									location.reload();
+								}
+							}"
+						>
+							<summary>{ ki.MustGetLanguage(ctx).String() }</summary>
+							<ul dir="rtl">
+								<li>
+									<a href="#" @click.prevent="setLanguage('en-US')">English</a>
+								</li>
+								<li>
+									<a href="#" @click.prevent="setLanguage('fr-FR')">Français</a>
+								</li>
+							</ul>
+						</details>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+}

@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pgadmin
+spec:
+  secretName: pgadmin-tls
+  duration: 2160h
+  renewBefore: 360h
+  dnsNames:
+    - pgadmin.local
+  issuerRef:
+    name: selfsigned-root
+    kind: ClusterIssuer

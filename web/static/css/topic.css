@@ -1,0 +1,118 @@
+.topic-container {
+  display: flex;
+  flex-direction: column;
+
+  .topic-toolbar {
+    align-self: end;
+    width: auto;
+  }
+
+  .topic-list-create {
+
+    /* fix creation form validation errors */
+    fieldset+small {
+      color: var(--pico-del-color);
+    }
+  }
+
+  .topic-list {
+    display: flex;
+    flex-direction: column;
+    box-shadow: none;
+    padding: 0 0 0 10px;
+    border-left: var(--pico-color) inset 1px;
+    border-radius: 0;
+    margin-bottom: 0;
+
+    /* root */
+    &[role="tree"] {
+      margin-bottom: revert;
+    }
+
+    & .even {
+      background-color: var(--pico-background-color)
+    }
+
+    & .odd {
+      background-color: var(--pico-table-row-stripped-background-color)
+    }
+
+    .topic-list-item {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+
+      /* toggle nested list */
+      &[aria-expanded="false"]>.topic-list {
+        display: none;
+      }
+
+      .topic-list-item-line {
+        position: relative;
+      }
+
+      .topic-list-item-line-content {
+        display: flex;
+        align-items: center;
+        padding: 5px;
+
+        /* link */
+        a {
+          display: inline-block;
+          width: 100%;
+          align-self: stretch;
+          align-content: center;
+          --pico-text-decoration: initial;
+          --pico-color: initial;
+        }
+
+        label {
+          display: inline-block;
+          width: 100%;
+          align-self: stretch;
+          align-content: center;
+          margin: auto;
+        }
+
+        /* actions */
+        div[role="group"] {
+          margin-bottom: 0;
+          box-shadow: none;
+          justify-content: flex-end;
+
+          button {
+            --pico-form-element-spacing-horizontal: 1rem;
+            flex: 0 1 auto;
+
+            i {
+              display: inline;
+
+            }
+          }
+        }
+
+        /* mouse over */
+        &:hover {
+          background-color: var(--pico-card-sectioning-background-color);
+          border-radius: var(--pico-border-radius);
+        }
+
+        /* focus */
+        &:has(a:focus-visible),
+        &:has(a:focus),
+        &:has(input[type="checkbox"]:focus-visible),
+        &:has(input[type="checkbox"]:focus) {
+          background-color: var(--pico-card-sectioning-background-color);
+          border-radius: var(--pico-border-radius);
+          box-shadow: 0 0 var(--pico-outline-width) var(--pico-primary-focus);
+
+          /* remove ugly focus border */
+          a:focus-visible,
+          a:focus {
+            box-shadow: none;
+          }
+        }
+      }
+    }
+  }
+}

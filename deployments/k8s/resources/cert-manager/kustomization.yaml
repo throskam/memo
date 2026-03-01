@@ -1,0 +1,5 @@
+resources:
+  - cluster-issuer-letsencrypt.yaml
+  - cluster-issuer-selfsigned.yaml
+  - root-certificate.yaml
+  - root-issuer.yaml

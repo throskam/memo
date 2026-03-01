@@ -1,0 +1,121 @@
+package pages
+
+import (
+	"github.com/throskam/kix/htmx"
+	"github.com/throskam/kix/i18n"
+	"github.com/throskam/memo/internal/lib"
+	"github.com/throskam/memo/internal/views/ui"
+	"golang.org/x/text/message"
+	"net/http"
+	"net/url"
+)
+
+type HomePageProps struct {
+	Projects []*lib.Project
+}
+
+templ HomePage(props HomePageProps) {
+	@ui.Page() {
+		<div class="home-container">
+			<h1>{ i18n.T(ctx, "Home") }</h1>
+			@HomeProjectList(HomeProjectListProps{Projects: props.Projects})
+			@HomeProjectCreate(HomeProjectCreateProps{Form: htmx.NewForm(&HomeProjectCreateForm{})})
+		</div>
+	}
+}
+
+type HomeProjectListProps struct {
+	Projects []*lib.Project
+}
+
+templ HomeProjectList(props HomeProjectListProps) {
+	{{ listLocation := lib.GetLocation(ctx, "home:project-list:get") }}
+	<ul
+		x-data
+		x-shortcut.j="$smartFocus.focusedItem('a').next()"
+		x-shortcut.k="$smartFocus.focusedItem('a').prev()"
+		x-shortcut.shift.and.g="$smartFocus.focusedItem('a').last()"
+		x-shortcut.g.then.g="$smartFocus.focusedItem('a').first()"
+		x-shortcut.shift.and.d="$smartFocus.focusedItemNode('a')?.closest('li')?.querySelector('[data-target=delete]').click()"
+		hx-swap="outerHTML"
+		hx-trigger="project-created from:body"
+		{ ui.HxAction(listLocation)... }
+	>
+		for _, project := range props.Projects {
+			@HomeProjectItem(HomeProjectItemProps{Project: project})
+		}
+	</ul>
+}
+
+type HomeProjectCreateForm struct {
+	Name string
+}
+
+func (f *HomeProjectCreateForm) Parse(r *http.Request) {
+	f.Name = r.FormValue("name")
+}
+
+func (f *HomeProjectCreateForm) Validate(p *message.Printer) url.Values {
+	validation := url.Values{}
+
+	if f.Name == "" {
+		validation.Add("name", p.Sprintf("The name is required"))
+	}
+
+	if len(f.Name) > 50 {
+		validation.Add("name", p.Sprintf("The name should be less than %d characters", 50))
+	}
+
+	return validation
+}
+
+type HomeProjectCreateProps struct {
+	Form *htmx.Form[*HomeProjectCreateForm]
+}
+
+templ HomeProjectCreate(props HomeProjectCreateProps) {
+	{{ submitLocation := lib.GetLocation(ctx, "home:project-create:submit") }}
+	<form hx-swap="outerHTML" { ui.HxAction(submitLocation)... }>
+		@ui.Prompt(ui.PromptProps{
+			ID:                 "project-list-create-name",
+			Name:               "name",
+			Kind:               "text",
+			Label:              i18n.T(ctx, "Project's name"),
+			Placeholder:        i18n.T(ctx, "My project"),
+			Value:              props.Form.Data.Name,
+			ValidationMessages: props.Form.Validation["name"],
+			CTA:                i18n.T(ctx, "Create"),
+			Attrs: templ.Attributes{
+				"x-data":       "",
+				"x-shortcut.a": "$el.focus()",
+			},
+		})
+	</form>
+}
+
+type HomeProjectItemProps struct {
+	Project *lib.Project
+}
+
+templ HomeProjectItem(props HomeProjectItemProps) {
+	{{
+		topicPageLocation := lib.GetLocation(ctx, "topic:page:get").WithPathParams(props.Project.Root.ID.String())
+		deleteLocation := lib.GetLocation(ctx, "home:project-item:delete").WithQueryParam("project", props.Project.ID.String())
+	}}
+	<li>
+		<a href={ topicPageLocation.URL().String() } hx-boost="true">
+			{ props.Project.Root.Title }
+		</a>
+		<div role="group">
+			<button
+				data-target="delete"
+				hx-target="closest li"
+				hx-swap="outerHTML"
+				hx-confirm="Are you sure ?"
+				{ ui.HxAction(deleteLocation)... }
+			>
+				@ui.Icon(ui.IconProps{Value: "delete"})
+			</button>
+		</div>
+	</li>
+}

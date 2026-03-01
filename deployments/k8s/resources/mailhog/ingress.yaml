@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mailhog
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - mailhog.local
+    secretName: mailhog-tls
+  rules:
+    - host: mailhog.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mailhog
+                port:
+                  name: ui

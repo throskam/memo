@@ -1,0 +1,42 @@
+package ui
+
+import (
+	"github.com/throskam/ki"
+	"strings"
+)
+
+type EditorProps struct {
+	Value string
+}
+
+templ Editor(props EditorProps) {
+	<div x-data={ "editor('" + strings.ReplaceAll(props.Value, "'", "\\'") + "')" }>
+		<div x-ref="element"></div>
+		{ children... }
+	</div>
+}
+
+type EditorFormProps struct {
+	ValidationMessages []string
+	SaveLocation       ki.Location
+}
+
+templ EditorForm(props EditorFormProps) {
+	<form hx-swap="outerHTML" { HxAction(props.SaveLocation)... }>
+		<input
+			x-ref="content"
+			type="hidden"
+			name="content"
+			aria-invalid="true"
+		/>
+		@Validation(ValidationProps{
+			ID:       "editor",
+			Messages: props.ValidationMessages,
+		})
+		<input
+			class="hidden"
+			x-ref="submit"
+			type="submit"
+		/>
+	</form>
+}

@@ -1,0 +1,546 @@
+package pages
+
+import (
+	"github.com/google/uuid"
+	"github.com/throskam/kix/htmx"
+	"github.com/throskam/kix/i18n"
+	"github.com/throskam/kix/sess"
+	"github.com/throskam/memo/internal/lib"
+	"github.com/throskam/memo/internal/views/ui"
+	"golang.org/x/text/message"
+	"net/http"
+	"net/url"
+	"strconv"
+)
+
+type TopicPageProps struct {
+	Topic       *lib.Topic
+	Ancestors   []*lib.Topic
+	Descendants []*lib.Topic
+}
+
+templ TopicPage(props TopicPageProps) {
+	@ui.Page() {
+		<div class="topic-container">
+			@TopicBreadcrumb(TopicBreadcrumbProps{Topic: props.Topic, Ancestors: props.Ancestors})
+			@TopicInfo(TopicInfoProps{Topic: props.Topic})
+			@TopicContent(TopicContentProps{Topic: props.Topic, Form: htmx.NewForm(&TopicContentForm{Content: props.Topic.Content})})
+			@TopicToolbar(TopicToolbarProps{Topic: props.Topic})
+			@TopicDescendantList(TopicDescendantListProps{Topic: props.Topic, Descendants: props.Descendants, Level: 0})
+			@TopicDescendantCreate(TopicDescendantCreateProps{Form: htmx.NewForm(&TopicDescendantCreateForm{ParentID: props.Topic.ID})})
+		</div>
+	}
+}
+
+type TopicBreadcrumbProps struct {
+	Topic     *lib.Topic
+	Ancestors []*lib.Topic
+}
+
+templ TopicBreadcrumb(props TopicBreadcrumbProps) {
+	{{
+		topicPage := lib.GetLocation(ctx, "topic:page:get")
+		projectPage := lib.GetLocation(ctx, "project:page:get").WithPathParams(props.Topic.ProjectID.String())
+	}}
+	@ui.Breadcrumb() {
+		@ui.BreadcrumbItem(ui.BreadcrumbItemProps{
+			Link: projectPage.URL().String(),
+		}) {
+			@ui.Icon(ui.IconProps{Value: "bar_chart"})
+		}
+		for _, ancestor := range props.Ancestors {
+			@ui.BreadcrumbItem(ui.BreadcrumbItemProps{
+				Link: topicPage.WithPathParams(ancestor.ID.String()).URL().String(),
+			}) {
+				{ ancestor.Title }
+			}
+		}
+		@ui.BreadcrumbCurrentItem() {
+			{ props.Topic.Title }
+		}
+	}
+}
+
+type TopicToolbarProps struct {
+	Topic *lib.Topic
+}
+
+templ TopicToolbar(props TopicToolbarProps) {
+	{{
+		enableSelectionModeLocation := lib.GetLocation(ctx, "topic:toolbar:enable-selection-mode").WithQueryParam("topic", props.Topic.ID.String())
+		disableSelectionModeLocation := lib.GetLocation(ctx, "topic:toolbar:disable-selection-mode").WithQueryParam("topic", props.Topic.ID.String())
+		expandRecursiveLocation := lib.GetLocation(ctx, "topic:toolbar:expand-recursive").WithQueryParam("topic", props.Topic.ID.String())
+		collapseRecursiveLocation := lib.GetLocation(ctx, "topic:toolbar:collapse-recursive").WithQueryParam("topic", props.Topic.ID.String())
+
+		session := sess.MustGetSession(ctx)
+
+		isSelectionModeEnabled := session.Has("mode", "selection")
+	}}
+	<div class="topic-toolbar" role="group">
+		<button
+			x-data
+			x-shortcut.shift.and.v="$el.click()"
+			hx-target="closest .topic-toolbar"
+			hx-swap="outerHTML"
+			if isSelectionModeEnabled {
+				{ ui.HxAction(disableSelectionModeLocation)... }
+			} else {
+				{ ui.HxAction(enableSelectionModeLocation)... }
+			}
+			aria-current="true"
+		>
+			<i class="material-icons">checklist</i>
+		</button>
+		if !isSelectionModeEnabled {
+			<button
+				x-data
+				x-shortcut.shift.and.l="$el.click()"
+				hx-swap="none"
+				{ ui.HxAction(expandRecursiveLocation)... }
+			>
+				<i class="material-icons">unfold_more</i>
+			</button>
+			<button
+				x-data
+				x-shortcut.shift.and.h="$el.click()"
+				hx-swap="none"
+				{ ui.HxAction(collapseRecursiveLocation)... }
+			>
+				<i class="material-icons">unfold_less</i>
+			</button>
+		}
+	</div>
+}
+
+type TopicInfoProps struct {
+	Topic *lib.Topic
+}
+
+templ TopicInfo(props TopicInfoProps) {
+	{{ editLocation := lib.GetLocation(ctx, "topic:info:edit").WithQueryParam("topic", props.Topic.ID.String()) }}
+	@ui.Card() {
+		@ui.CardHeader(ui.CardHeaderProps{
+			Title: i18n.T(ctx, "Overview"),
+		}) {
+			@ui.CardActions() {
+				@ui.CardAction(ui.CardActionProps{
+					Location: editLocation,
+					Attrs: templ.Attributes{
+						"x-data":       "",
+						"x-shortcut.e": "$el.click()",
+					},
+				}) {
+					{ i18n.T(ctx, "Edit") }
+				}
+			}
+		}
+		@ui.DescriptionList() {
+			@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Title")}) {
+				{ props.Topic.Title }
+			}
+			@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Created at")}) {
+				@ui.Time(ui.TimeProps{Value: props.Topic.CreatedAt})
+			}
+		}
+	}
+}
+
+type TopicInfoEditForm struct {
+	Title string
+}
+
+func (f *TopicInfoEditForm) Parse(r *http.Request) {
+	f.Title = r.FormValue("title")
+}
+
+func (f *TopicInfoEditForm) Validate(p *message.Printer) url.Values {
+	validation := url.Values{}
+
+	if f.Title == "" {
+		validation.Add("title", p.Sprintf("The title is required"))
+	}
+
+	if len(f.Title) > 50 {
+		validation.Add("title", p.Sprintf("The title should be less than %d characters", 50))
+	}
+
+	return validation
+}
+
+type TopicInfoEditProps struct {
+	Topic *lib.Topic
+	Form  *htmx.Form[*TopicInfoEditForm]
+}
+
+templ TopicInfoEdit(props TopicInfoEditProps) {
+	{{
+		saveLocation := lib.GetLocation(ctx, "topic:info:save").WithQueryParam("topic", props.Topic.ID.String())
+		cancelLocation := lib.GetLocation(ctx, "topic:info:get").WithQueryParam("topic", props.Topic.ID.String())
+	}}
+	<form hx-swap="outerHTML" { ui.HxAction(saveLocation)... } data-confirm-redirect={ i18n.T(ctx, "Discard unsaved changes ?") }>
+		@ui.Card() {
+			@ui.CardHeader(ui.CardHeaderProps{
+				Title: i18n.T(ctx, "Overview"),
+			}) {
+				@ui.CardActions() {
+					@ui.CardActionSubmit(ui.CardActionSubmitProps{
+						Attrs: templ.Attributes{
+							"x-data":       "",
+							"x-shortcut.w": "$el.click()",
+						},
+					}) {
+						{ i18n.T(ctx, "Save") }
+					}
+					@ui.CardAction(ui.CardActionProps{
+						Location: cancelLocation,
+						Attrs: templ.Attributes{
+							"hx-target":    "closest form",
+							"x-data":       "",
+							"x-shortcut.u": "$el.click()",
+						},
+					}) {
+						{ i18n.T(ctx, "Cancel") }
+					}
+				}
+			}
+			@ui.DescriptionList() {
+				@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Title")}) {
+					@ui.Input(ui.InputProps{
+						ID:                 "topic-edit-title",
+						Name:               "title",
+						Kind:               "text",
+						Label:              i18n.T(ctx, "Title"),
+						Placeholder:        i18n.T(ctx, "Topic's title"),
+						Value:              props.Form.Data.Title,
+						ValidationMessages: props.Form.Validation["title"],
+						Attrs: templ.Attributes{
+							"x-autofocus": "",
+						},
+					})
+				}
+				@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Created at")}) {
+					@ui.Time(ui.TimeProps{Value: props.Topic.CreatedAt})
+				}
+			}
+		}
+	</form>
+}
+
+type TopicContentForm struct {
+	Content string
+}
+
+func (f *TopicContentForm) Parse(r *http.Request) {
+	f.Content = r.FormValue("content")
+}
+
+func (f *TopicContentForm) Validate(p *message.Printer) url.Values {
+	validation := url.Values{}
+
+	if len(f.Content) > 1000 {
+		validation.Add("content", p.Sprintf("The content should be less than %d characters", 1000))
+	}
+
+	return validation
+}
+
+type TopicContentProps struct {
+	Topic *lib.Topic
+	Form  *htmx.Form[*TopicContentForm]
+}
+
+templ TopicContent(props TopicContentProps) {
+	{{
+		expandLocation := lib.GetLocation(ctx, "topic:content:expand").WithQueryParam("topic", props.Topic.ID.String())
+		collapseLocation := lib.GetLocation(ctx, "topic:content:collapse").WithQueryParam("topic", props.Topic.ID.String())
+
+		session := sess.MustGetSession(ctx)
+
+		isExpanded := session.Has("expanded-content", props.Topic.ID.String())
+	}}
+	@ui.Card() {
+		@ui.CardHeader(ui.CardHeaderProps{Title: i18n.T(ctx, "Content")}) {
+			@ui.CardActions() {
+				if isExpanded {
+					@ui.CardAction(ui.CardActionProps{
+						Location: collapseLocation,
+					}) {
+						@ui.Icon(ui.IconProps{Value: "unfold_more"})
+					}
+				} else {
+					@ui.CardAction(ui.CardActionProps{
+						Location: expandLocation,
+					}) {
+						@ui.Icon(ui.IconProps{Value: "unfold_less"})
+					}
+				}
+			}
+		}
+		if isExpanded {
+			@ui.Editor(ui.EditorProps{
+				Value: props.Topic.Content,
+			}) {
+				@TopicContentData(TopicContentDataProps{
+					Topic: props.Topic,
+					Form:  props.Form,
+				})
+			}
+		}
+	}
+}
+
+type TopicContentDataProps struct {
+	Topic *lib.Topic
+	Form  *htmx.Form[*TopicContentForm]
+}
+
+templ TopicContentData(props TopicContentDataProps) {
+	{{ saveLocation := lib.GetLocation(ctx, "topic:content:save").WithQueryParam("topic", props.Topic.ID.String()) }}
+	@ui.EditorForm(ui.EditorFormProps{
+		ValidationMessages: props.Form.Validation["content"],
+		SaveLocation:       saveLocation,
+	})
+}
+
+type TopicDescendantListProps struct {
+	Topic       *lib.Topic
+	Descendants []*lib.Topic
+	Level       int
+}
+
+templ TopicDescendantList(props TopicDescendantListProps) {
+	{{
+		listLocation := lib.GetLocation(ctx, "topic:descendant-list:get").WithQueryParam("parent", props.Topic.ID.String())
+
+		children := []*lib.Topic{}
+		restOfDescendants := []*lib.Topic{}
+
+		for _, descendant := range props.Descendants {
+			if descendant.ParentID.UUID == props.Topic.ID {
+				children = append(children, descendant)
+			} else {
+				restOfDescendants = append(restOfDescendants, descendant)
+			}
+		}
+	}}
+	if len(children) > 0 || props.Level < 1 {
+		<ul
+			if props.Level == 0 {
+				id="list"
+				role="tree"
+				x-data
+				x-shortcut.j="$smartFocus.focusedItem('a,input').next()"
+				x-shortcut.k="$smartFocus.focusedItem('a,input').prev()"
+				x-shortcut.shift.and.g="$smartFocus.focusedItem('a,input').last()"
+				x-shortcut.g.then.g="$smartFocus.focusedItem('a,input').first()"
+				x-shortcut.shift.and.d="$smartFocus.focusedItemNode('a')?.closest('li')?.querySelector('[data-target=delete]')?.click()"
+				x-shortcut.shift.and.p="$smartFocus.focusedItemNode('input')?.closest('li')?.querySelector('[data-target=move-above]')?.click()"
+				x-shortcut.o="$smartFocus.focusedItemNode('input')?.closest('li')?.querySelector('[data-target=move-inside]')?.click()"
+				x-shortcut.p="$smartFocus.focusedItemNode('input')?.closest('li')?.querySelector('[data-target=move-below]')?.click()"
+				x-shortcut.l="$smartFocus.focusedItemNode('input')?.closest('li')?.querySelector('[data-target=expand]')?.click()"
+				x-shortcut.h="$smartFocus.focusedItemNode('input')?.closest('li')?.querySelector('[data-target=collapse]')?.click()"
+				{ ui.HxAction(listLocation)... }
+				hx-trigger="topic-list-updated from:body"
+				hx-swap="outerHTML"
+			} else {
+				role="group"
+			}
+			if props.Level%2==0 {
+				class="topic-list even"
+			} else {
+				class="topic-list odd"
+			}
+		>
+			for _, child := range children {
+				@TopicDescendantItem(TopicDescendantItemProps{
+					Topic:       child,
+					Descendants: restOfDescendants,
+					Level:       props.Level,
+				})
+			}
+		</ul>
+	}
+}
+
+type TopicDescendantItemProps struct {
+	Topic       *lib.Topic
+	Descendants []*lib.Topic
+	Level       int
+}
+
+templ TopicDescendantItem(props TopicDescendantItemProps) {
+	{{
+		topicPage := lib.GetLocation(ctx, "topic:page:get").WithPathParams(props.Topic.ID.String())
+		expandLocation := lib.GetLocation(ctx, "topic:descendant-item:expand").WithQueryParam("topic", props.Topic.ID.String())
+		collapseLocation := lib.GetLocation(ctx, "topic:descendant-item:collapse").WithQueryParam("topic", props.Topic.ID.String())
+		deleteLocation := lib.GetLocation(ctx, "topic:descendant-item:delete").WithQueryParam("topic", props.Topic.ID.String())
+		moveLocation := lib.GetLocation(ctx, "topic:descendant-list:move").WithQueryParam("destination", props.Topic.ID.String())
+
+		childrenCount := 0
+
+		for _, descendant := range props.Descendants {
+			if descendant.ParentID.UUID == props.Topic.ID {
+				childrenCount = childrenCount + 1
+			}
+		}
+
+		session := sess.MustGetSession(ctx)
+
+		isExpanded := session.Has("expanded-topics", props.Topic.ID.String())
+		isSelectionModeEnabled := session.Has("mode", "selection")
+	}}
+	<li class="topic-list-item" role="treeitem" aria-expanded={ strconv.FormatBool(isExpanded) } data-id={ props.Topic.ID.String() }>
+		<div class="topic-list-item-line">
+			<div class="topic-list-item-line-content">
+				if isSelectionModeEnabled {
+					<label>
+						<input id={ "topic-" + props.Topic.ID.String() } type="checkbox" name="sources" value={ props.Topic.ID.String() }/>
+						{ props.Topic.Title }
+					</label>
+				} else {
+					<a
+						id={ "topic-" + props.Topic.ID.String() }
+						href={ topicPage.WithPathParams(props.Topic.ID.String()).URL().String() }
+						hx-boost="true"
+					>
+						{ props.Topic.Title }
+					</a>
+				}
+				<div role="group">
+						if isSelectionModeEnabled {
+								if props.Level == 0 && props.Topic.SortOrder == 1 {
+									<button
+										data-target="move-above"
+										{ ui.HxAction(moveLocation.WithQueryParam("zone", "above"))... }
+										hx-include=".topic-list input[type=checkbox]:checked"
+									hx-swap="none"
+							>
+								<i class="material-icons">move_up</i>
+							</button>
+						}
+								<button
+									data-target="move-inside"
+									{ ui.HxAction(moveLocation.WithQueryParam("zone", "inside"))... }
+									hx-include=".topic-list input[type=checkbox]:checked"
+								hx-swap="none"
+						>
+							<i class="material-icons">format_list_bulleted_add</i>
+						</button>
+								<button
+									data-target="move-below"
+									{ ui.HxAction(moveLocation.WithQueryParam("zone", "below"))... }
+									hx-include=".topic-list input[type=checkbox]:checked"
+								hx-swap="none"
+						>
+							<i class="material-icons">move_down</i>
+						</button>
+					} else {
+						if childrenCount > 0 {
+									<button
+										if isExpanded {
+											{ ui.HxAction(collapseLocation)... }
+											data-target="collapse"
+										} else {
+											{ ui.HxAction(expandLocation)... }
+											data-target="expand"
+										}
+										hx-swap="none"
+								>
+								if isExpanded {
+									<i class="material-icons">keyboard_arrow_down</i>
+								} else {
+									<i class="material-icons">keyboard_arrow_up</i>
+								}
+								{ strconv.Itoa(childrenCount) }
+							</button>
+						}
+								<button
+									data-target="delete"
+									{ ui.HxAction(deleteLocation)... }
+									x-ref="delete"
+								hx-target="closest li"
+							hx-swap="outerHTML"
+							if childrenCount> 0 {
+								hx-confirm={ i18n.T(ctx, "Delete this topic and its %d descendants ?", len(props.Descendants)) }
+							} else {
+								hx-confirm={ i18n.T(ctx, "Delete this topic ?") }
+							}
+						>
+							<i class="material-icons">delete</i>
+						</button>
+					}
+				</div>
+			</div>
+		</div>
+		if isExpanded {
+			@TopicDescendantList(TopicDescendantListProps{Topic: props.Topic, Descendants: props.Descendants, Level: props.Level + 1})
+		}
+	</li>
+}
+
+type TopicDescendantCreateForm struct {
+	ParentID uuid.UUID
+	Title    string
+}
+
+func (f *TopicDescendantCreateForm) Parse(r *http.Request) {
+	parentID, err := uuid.Parse(r.FormValue("parent"))
+
+	if err != nil {
+		f.ParentID = uuid.Nil
+	} else {
+		f.ParentID = parentID
+	}
+
+	f.Title = r.FormValue("title")
+}
+
+func (f *TopicDescendantCreateForm) Validate(p *message.Printer) url.Values {
+	validation := url.Values{}
+
+	if f.ParentID == uuid.Nil {
+		validation.Add("parent", p.Sprintf("The parent is required"))
+	}
+
+	if f.Title == "" {
+		validation.Add("title", p.Sprintf("The title is required"))
+	}
+
+	if len(f.Title) > 50 {
+		validation.Add("title", p.Sprintf("The title should be less than %d characters", 50))
+	}
+
+	return validation
+}
+
+type TopicDescendantCreateProps struct {
+	Form *htmx.Form[*TopicDescendantCreateForm]
+}
+
+templ TopicDescendantCreate(props TopicDescendantCreateProps) {
+	{{ submitLocation := lib.GetLocation(ctx, "topic:descendant-create:submit") }}
+	<form
+		class="topic-list-create"
+		autocomplete="off"
+		hx-swap="outerHTML"
+		hx-on::after-settle="this.querySelector('#topic-list-create-title').scrollIntoView()"
+		{ ui.HxAction(submitLocation)... }
+	>
+		@ui.Prompt(ui.PromptProps{
+			ID:                 "topic-list-create-title",
+			Name:               "title",
+			Kind:               "text",
+			Label:              i18n.T(ctx, "Topic's title"),
+			Placeholder:        i18n.T(ctx, "My topic"),
+			Value:              props.Form.Data.Title,
+			ValidationMessages: props.Form.Validation["title"],
+			CTA:                "Create",
+			Attrs: templ.Attributes{
+				"x-data":       "",
+				"x-shortcut.a": "$el.focus()",
+			},
+		}) {
+			<input type="hidden" name="parent" value={ props.Form.Data.ParentID.String() }/>
+		}
+	</form>
+}

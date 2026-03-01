@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: localhost/app:dev
+          ports:
+            - containerPort: 2345 # dlv
+          tty: true
+          volumeMounts:
+            - name: app-code
+              mountPath: /opt/app
+      volumes:
+        - name: app-code
+          hostPath:
+            path: /app

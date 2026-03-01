@@ -1,0 +1,53 @@
+.home-container {
+  display: grid;
+  grid: auto max-content auto / 1fr;
+
+  &>ul {
+    padding: 0;
+
+    li {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+      margin-bottom: 0;
+
+      a,
+      a:hover,
+      a:active,
+      a:focus {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        align-content: center;
+        --pico-text-decoration: initial;
+        --pico-color: initial;
+
+      }
+
+      &:hover {
+        background-color: var(--pico-card-sectioning-background-color);
+        border-radius: var(--pico-border-radius)
+      }
+
+      [role="group"] {
+        margin-bottom: 0;
+      }
+
+      /* focus */
+      &:has(a:focus-visible),
+      &:has(a:focus) {
+        background-color: var(--pico-card-sectioning-background-color);
+        border-radius: var(--pico-border-radius);
+        box-shadow: 0 0 var(--pico-outline-width) var(--pico-primary-focus);
+
+        /* remove ugly focus border */
+        a:focus-visible,
+        a:focus {
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}
+}

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app
+data:
+  APP_BASE_URL: "https://throskam.dev"
+  LOGGER_LEVEL: "Error"

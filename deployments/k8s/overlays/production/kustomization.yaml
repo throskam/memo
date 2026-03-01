@@ -1,0 +1,11 @@
+resources:
+  - ../../resources/app
+  - ../../resources/postgres
+  - ./namespace.yaml
+
+namespace: production
+
+secretGenerator:
+  - name: app
+    envs:
+      - .env

@@ -1,0 +1,48 @@
+package pages
+
+import (
+	"strconv"
+
+	"github.com/throskam/kix/i18n"
+	"github.com/throskam/memo/internal/lib"
+	"github.com/throskam/memo/internal/views/ui"
+)
+
+type ProjectPageProps struct {
+	Project    *lib.Project
+	TopicCount int
+}
+
+templ ProjectPage(props ProjectPageProps) {
+	{{ pageLocation := lib.GetLocation(ctx, "topic:page:get").WithPathParams(props.Project.Root.ID.String()) }}
+	@ui.Page() {
+		@ui.Breadcrumb() {
+			@ui.BreadcrumbItem(ui.BreadcrumbItemProps{
+				Link: pageLocation.URL().String(),
+			}) {
+				@ui.Icon(ui.IconProps{Value: "list"})
+			}
+			@ui.BreadcrumbCurrentItem() {
+				{ i18n.T(ctx, "%s's overview", props.Project.Root.Title) }
+			}
+		}
+		@ui.Card() {
+			@ui.CardHeader(ui.CardHeaderProps{
+				Title: i18n.T(ctx, "Overview"),
+			})
+			@ui.DescriptionList() {
+				@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Created at")}) {
+					@ui.Time(ui.TimeProps{
+						Value: props.Project.CreatedAt,
+					})
+				}
+				@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Owner")}) {
+					{ props.Project.Owner.Username }
+				}
+				@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Topic count")}) {
+					{ strconv.Itoa(props.TopicCount) }
+				}
+			}
+		}
+	}
+}

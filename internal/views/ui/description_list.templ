@@ -1,0 +1,18 @@
+package ui
+
+templ DescriptionList() {
+	<dl>
+		{ children... }
+	</dl>
+}
+
+type DescriptionListItemProps struct {
+	Label string
+}
+
+templ DescriptionListItem(props DescriptionListItemProps) {
+	<dt>{ props.Label }</dt>
+	<dd>
+		{ children... }
+	</dd>
+}

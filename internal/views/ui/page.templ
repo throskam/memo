@@ -1,0 +1,45 @@
+package ui
+
+import (
+	"github.com/throskam/ki"
+	"github.com/throskam/kix/auth"
+)
+
+templ Page() {
+	{{
+		attrs := templ.Attributes{}
+		attrs["hx-headers"] = `{"X-CSRF-TOKEN": "` + auth.GetCSRFTokenOrCreate(ctx) + `"}`
+	}}
+	<!DOCTYPE html>
+	<html lang={ ki.MustGetLanguage(ctx).String() } { attrs... }>
+		<head>
+			<title>Memo</title>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width,initial-scale=1"/>
+			<meta name="color-scheme" content="light dark"/>
+			<link rel="apple-touch-icon" sizes="180x180" href="/static/icons/apple-touch-icon.png"/>
+			<link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon-32x32.png"/>
+			<link rel="icon" type="image/png" sizes="16x16" href="/static/icons/favicon-16x16.png"/>
+			<link rel="manifest" href="/static/site.webmanifest"/>
+			<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+			<link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" rel="stylesheet"/>
+			<link href="/static/css/main.css" rel="stylesheet"/>
+			<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+			<script src="https://unpkg.com/tinykeys@3.0.0/dist/tinykeys.umd.js" defer></script>
+			<script src="/static/js/main.js" type="module" defer></script>
+			<script src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js" defer></script>
+			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.js" defer></script>
+			<meta
+				name="htmx-config"
+				content='{ "responseHandling": [ {"code": "...", "swap": true } ] }'
+			/>
+		</head>
+		<body>
+			@Navbar()
+			<main class="container">
+				{ children... }
+				<div id="notifications"></div>
+			</main>
+		</body>
+	</html>
+}

@@ -1,0 +1,15 @@
+package pages
+
+import (
+	"github.com/throskam/kix/i18n"
+	"github.com/throskam/memo/internal/views/ui"
+)
+
+templ AboutPage() {
+	@ui.Page() {
+		<h1>{ i18n.T(ctx, "About us") }</h1>
+		<p>
+			{ i18n.T(ctx, "Welcome to your new productivity sidekick!\nWe’re here to help you get more done, without all the unnecessary fluff.\nKeep it simple, stay organized, and let’s crush those to-do lists together.\nLet’s make productivity less of a hassle and more of a habit!") }
+		</p>
+	}
+}

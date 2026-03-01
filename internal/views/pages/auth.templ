@@ -1,0 +1,78 @@
+package pages
+
+import (
+	"net/http"
+	"net/mail"
+	"net/url"
+
+	"github.com/throskam/kix/htmx"
+	"github.com/throskam/kix/i18n"
+	"github.com/throskam/memo/internal/lib"
+	"github.com/throskam/memo/internal/views/ui"
+	"golang.org/x/text/message"
+)
+
+type AuthPageProps struct {
+	State url.Values
+}
+
+templ AuthPage(props AuthPageProps) {
+	@ui.Page() {
+		<h4>{ i18n.T(ctx, "Passwordless Authentication") }</h4>
+		<p>
+			{ i18n.T(ctx, "Just enter your email, and we’ll send you a magic link to sign in securely. No need to remember complicated passwords or create an account. This method is fast, safe, and respects your privacy—we only use your email to send the login link. Check your inbox, click the link, and you’re in. That’s it!") }
+		</p>
+		@AuthPasswordless(AuthPasswordlessProps{
+			State: props.State,
+			Form:  htmx.NewForm(&AuthPasswordlessForm{}),
+		})
+	}
+}
+
+type AuthPasswordlessForm struct {
+	Email string
+}
+
+func (f *AuthPasswordlessForm) Parse(r *http.Request) {
+	f.Email = r.FormValue("email")
+}
+
+func (f *AuthPasswordlessForm) Validate(p *message.Printer) url.Values {
+	validation := url.Values{}
+
+	if f.Email == "" {
+		validation.Add("email", p.Sprintf("The email is required"))
+	}
+
+	_, err := mail.ParseAddress(f.Email)
+	if err != nil {
+		validation.Add("email", p.Sprintf("The email is invalid"))
+	}
+
+	return validation
+}
+
+type AuthPasswordlessProps struct {
+	State   url.Values
+	Form    *htmx.Form[*AuthPasswordlessForm]
+	Success bool
+}
+
+templ AuthPasswordless(props AuthPasswordlessProps) {
+	{{ passwordlessSendLocation := lib.GetLocation(ctx, "auth:passwordless:send") }}
+	<form { ui.HxAction(passwordlessSendLocation.WithQuery(props.State))... }>
+		@ui.Prompt(ui.PromptProps{
+			ID:                 "login-passwordless-email",
+			Name:               "email",
+			Kind:               "email",
+			Label:              i18n.T(ctx, "Email Address"),
+			Placeholder:        "john.doe@example.com",
+			Value:              "",
+			ValidationMessages: []string{},
+			CTA:                i18n.T(ctx, "Send Magic Link"),
+		})
+		if props.Success {
+			<p>Sent! Check your email for the magic link.</p>
+		}
+	</form>
+}

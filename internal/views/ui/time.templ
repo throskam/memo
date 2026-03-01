@@ -1,0 +1,16 @@
+package ui
+
+import "time"
+
+type TimeProps struct {
+	Value time.Time
+}
+
+templ Time(props TimeProps) {
+	{{
+		iso := props.Value.Format(time.RFC3339)
+	}}
+	<time datetime={ iso } x-data="time">
+		{ iso }
+	</time>
+}

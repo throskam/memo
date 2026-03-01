@@ -1,0 +1,139 @@
+package pages
+
+import (
+	"net/http"
+	"net/url"
+
+	"github.com/throskam/kix/htmx"
+	"github.com/throskam/kix/i18n"
+	"github.com/throskam/memo/internal/lib"
+	"github.com/throskam/memo/internal/views/ui"
+	"golang.org/x/text/message"
+)
+
+type ProfilePageProps struct {
+	User *lib.User
+}
+
+templ ProfilePage(props ProfilePageProps) {
+	@ui.Page() {
+		<h1>{ i18n.T(ctx, "Profile") }</h1>
+		@ProfileInfo(ProfileInfoProps{User: props.User})
+	}
+}
+
+type ProfileInfoProps struct {
+	User *lib.User
+}
+
+templ ProfileInfo(props ProfileInfoProps) {
+	{{ editLocation := lib.GetLocation(ctx, "profile:info:edit") }}
+	@ui.Card() {
+		@ui.CardHeader(ui.CardHeaderProps{Title: i18n.T(ctx, "Overview")}) {
+			@ui.CardActions() {
+				@ui.CardAction(ui.CardActionProps{
+					Location: editLocation,
+					Attrs: templ.Attributes{
+						"x-data":       "",
+						"x-shortcut.e": "$el.click()",
+					},
+				}) {
+					{ i18n.T(ctx, "Edit") }
+				}
+			}
+		}
+		@ui.DescriptionList() {
+			@ui.DescriptionListItem(ui.DescriptionListItemProps{
+				Label: i18n.T(ctx, "Username")},
+			) {
+				{ props.User.Username }
+			}
+			@ui.DescriptionListItem(ui.DescriptionListItemProps{
+				Label: i18n.T(ctx, "Created at")},
+			) {
+				@ui.Time(ui.TimeProps{Value: props.User.CreatedAt})
+			}
+		}
+	}
+}
+
+type ProfileInfoEditForm struct {
+	Username string
+}
+
+func (f *ProfileInfoEditForm) Parse(r *http.Request) {
+	f.Username = r.FormValue("username")
+}
+
+func (f ProfileInfoEditForm) Validate(p *message.Printer) url.Values {
+	validation := url.Values{}
+
+	if f.Username == "" {
+		validation.Add("username", p.Sprintf("The username is required"))
+	}
+
+	if len(f.Username) > 30 {
+		validation.Add("username", p.Sprintf("The username should be less than %d characters", 10))
+	}
+
+	return validation
+}
+
+type ProfileInfoEditProps struct {
+	User *lib.User
+	Form *htmx.Form[*ProfileInfoEditForm]
+}
+
+templ ProfileInfoEdit(props ProfileInfoEditProps) {
+	{{
+		saveLocation := lib.GetLocation(ctx, "profile:info:save")
+		showLocation := lib.GetLocation(ctx, "profile:info:get")
+	}}
+	<form hx-swap="outerHTML" { ui.HxAction(saveLocation)... } data-confirm-redirect={ i18n.T(ctx, "Discard unsaved changes ?") }>
+		@ui.Card() {
+			@ui.CardHeader(ui.CardHeaderProps{
+				Title: i18n.T(ctx, "Overview"),
+			}) {
+				@ui.CardActions() {
+					@ui.CardActionSubmit(ui.CardActionSubmitProps{
+						Attrs: templ.Attributes{
+							"x-data":       "",
+							"x-shortcut.w": "$el.click()",
+						},
+					}) {
+						{ i18n.T(ctx, "Save") }
+					}
+					@ui.CardAction(ui.CardActionProps{
+						Location: showLocation,
+						Attrs: templ.Attributes{
+							"hx-target":    "closest form",
+							"x-data":       "",
+							"x-shortcut.u": "$el.click()",
+						},
+					}) {
+						{ i18n.T(ctx, "Cancel") }
+					}
+				}
+			}
+			@ui.DescriptionList() {
+				@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Username")}) {
+					@ui.Input(ui.InputProps{
+						ID:                 "profile-username",
+						Name:               "username",
+						Kind:               "text",
+						Label:              i18n.T(ctx, "Title"),
+						Placeholder:        i18n.T(ctx, "Username"),
+						Value:              props.Form.Data.Username,
+						ValidationMessages: props.Form.Validation["username"],
+						Attrs: templ.Attributes{
+							"x-autofocus": "",
+						},
+					})
+				}
+				@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Created at")}) {
+					@ui.Time(ui.TimeProps{Value: props.User.CreatedAt})
+				}
+			}
+		}
+	</form>
+}

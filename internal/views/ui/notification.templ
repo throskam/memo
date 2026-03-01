@@ -1,0 +1,21 @@
+package ui
+
+type NotificationProps struct {
+	Kind  string
+	Title string
+	Text  string
+}
+
+templ Notification(props NotificationProps) {
+	<div id="notifications" hx-swap-oob="beforeend" aria-live="polite">
+		<article class={ props.Kind } x-data="{ open: true }" x-show="open">
+			<header>
+				{ props.Title }
+				<button @click="open = false">
+					<i class="material-icons">close</i>
+				</button>
+			</header>
+			{ props.Text }
+		</article>
+	</div>
+}
