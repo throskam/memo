@@ -7,7 +7,7 @@ services:
     volumes:
       - .:/opt/app
     ports:
-      - "1080:80"
+      - "1080:8080"
       - "2345:2345" # dlv
     tty: true
   db:

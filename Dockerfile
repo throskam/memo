@@ -12,7 +12,7 @@ FROM base AS dev
 
 ENV APP_ENV=development
 
-EXPOSE 80
+EXPOSE 8080
 
 FROM base AS build
 
@@ -37,6 +37,6 @@ COPY --from=build /opt/app/server server
 
 USER go
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["/server"]
