@@ -32,6 +32,7 @@ ENV APP_ENV=production
 
 WORKDIR /
 
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /etc/passwd /etc/passwd
 COPY --from=build /opt/app/server server
 
