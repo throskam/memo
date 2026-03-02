@@ -10,7 +10,7 @@ import (
 
 	_ "github.com/throskam/memo/internal/translations"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/throskam/ki"
 	"github.com/throskam/ki/middlewares"
 	"github.com/throskam/kix/auth"
@@ -33,12 +33,12 @@ func NewServer(ctx context.Context) *http.Server {
 
 	// Database
 
-	conn, err := pgx.Connect(ctx, config.Database.ConnectionString)
+	pool, err := pgxpool.New(ctx, config.Database.ConnectionString)
 	if err != nil {
 		panic(err)
 	}
 
-	queries := orm.New(conn)
+	queries := orm.New(pool)
 
 	// Session
 
@@ -118,8 +118,14 @@ func NewServer(ctx context.Context) *http.Server {
 		config,
 	)
 
-	return &http.Server{
+	srv := &http.Server{
 		Addr:    ":8080",
 		Handler: r,
 	}
+
+	srv.RegisterOnShutdown(func() {
+		pool.Close()
+	})
+
+	return srv
 }
