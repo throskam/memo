@@ -111,7 +111,7 @@ func (c *AuthController) PasswordlessVerify(w http.ResponseWriter, r *http.Reque
 
 	claims["sub"] = user.ID
 
-	bearer, err := auth.GenerateJWT(c.jwks, claims, time.Hour*24)
+	bearer, err := auth.GenerateJWT(c.jwks, claims, time.Hour*30*24)
 	if err != nil {
 		RenderProblem(w, r, NewProblem(fmt.Errorf("failed to generate jwt: %w", err)))
 		return
