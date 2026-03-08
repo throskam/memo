@@ -20,9 +20,9 @@ RUN useradd -u 1000 go
 
 COPY . .
 
-RUN go build \
-  -ldflags="-linkmode external -extldflags -static" \
-  -tags netgo \
+RUN CGO_ENABLED=0 go build \
+  -trimpath \
+  -ldflags="-s -w" \
   -o server \
   cmd/server/main.go
 

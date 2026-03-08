@@ -1,0 +1,13 @@
+.git
+.github
+.air.toml
+.env
+.env.*
+.build
+deployments
+docker-compose.yaml
+README.md
+CODE_OF_CONDUCT.md
+LICENSE
+Makefile
+db
