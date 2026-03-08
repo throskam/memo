@@ -72,7 +72,7 @@ templ AuthPasswordless(props AuthPasswordlessProps) {
 			CTA:                i18n.T(ctx, "Send Magic Link"),
 		})
 		if props.Success {
-			<p>Sent! Check your email for the magic link.</p>
+			<p>{ i18n.T(ctx, "Sent! Check your email for the magic link.") }</p>
 		}
 	</form>
 }

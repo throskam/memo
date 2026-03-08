@@ -9,6 +9,7 @@ import (
 	"github.com/throskam/ki"
 	"github.com/throskam/kix/auth"
 	"github.com/throskam/kix/htmx"
+	"github.com/throskam/kix/i18n"
 	"github.com/throskam/kix/sess"
 	"github.com/throskam/memo/internal/lib"
 	"github.com/throskam/memo/internal/orm"
@@ -40,7 +41,7 @@ func NewAuthController(us *lib.UserService, jwks auth.JWKS, smtp string, baseURL
 func (c *AuthController) PageGet(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		RenderError(w, r, 500, err)
+		RenderProblem(w, r, NewProblem(fmt.Errorf("failed to parse form: %w", err)))
 		return
 	}
 
@@ -66,19 +67,19 @@ func (c *AuthController) PasswordlessSend(w http.ResponseWriter, r *http.Request
 		"redirect_url": r.FormValue("redirect_url"),
 	}, time.Minute*15)
 	if err2 != nil {
-		RenderError(w, r, 500, fmt.Errorf("failed to generate JWT: %w", err2))
+		RenderProblem(w, r, NewProblem(fmt.Errorf("failed to generate JWT: %w", err2)))
 		return
 	}
 
 	link := c.baseURL.ResolveReference(ki.GetLocation(r.Context(), "auth:passwordless:verify").WithQueryParam("token", jwt).URL())
 	from := c.from
 	to := []string{form.Data.Email}
-	subject := "Connect"
-	body := fmt.Sprintf("Follow the link to connect : %s", link.String())
+	subject := i18n.T(r.Context(), "Connect")
+	body := i18n.T(r.Context(), "Follow the link to connect : %s", link.String())
 
 	err3 := lib.SendEmail(from, to, subject, body, lib.WithAPIKey(c.apiKey), lib.WithSMTP(c.smtp))
 	if err3 != nil {
-		RenderError(w, r, 500, fmt.Errorf("failed to send mail: %w", err3))
+		RenderProblem(w, r, NewProblem(fmt.Errorf("failed to send mail: %w", err3)))
 		return
 	}
 
@@ -92,7 +93,7 @@ func (c *AuthController) PasswordlessSend(w http.ResponseWriter, r *http.Request
 func (c *AuthController) PasswordlessVerify(w http.ResponseWriter, r *http.Request) {
 	token, err := auth.ParseJWT(c.jwks, r.FormValue("token"), time.Minute*5)
 	if err != nil {
-		RenderError(w, r, 500, fmt.Errorf("failed to parse JWT: %w", err))
+		RenderProblem(w, r, NewProblem(fmt.Errorf("failed to parse JWT: %w", err)))
 		return
 	}
 
@@ -102,7 +103,7 @@ func (c *AuthController) PasswordlessVerify(w http.ResponseWriter, r *http.Reque
 
 	user, err := c.us.GetByAuthenticationMethodOrCreate(r.Context(), authenticationMethod)
 	if err != nil {
-		RenderError(w, r, 500, fmt.Errorf("failed to get or create user: %w", err))
+		RenderProblem(w, r, NewProblem(fmt.Errorf("failed to get or create user: %w", err)))
 		return
 	}
 
@@ -112,7 +113,7 @@ func (c *AuthController) PasswordlessVerify(w http.ResponseWriter, r *http.Reque
 
 	bearer, err := auth.GenerateJWT(c.jwks, claims, time.Hour*24)
 	if err != nil {
-		RenderError(w, r, 500, fmt.Errorf("failed to generate jwt: %w", err))
+		RenderProblem(w, r, NewProblem(fmt.Errorf("failed to generate jwt: %w", err)))
 		return
 	}
 

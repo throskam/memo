@@ -111,7 +111,7 @@ templ HomeProjectItem(props HomeProjectItemProps) {
 				data-target="delete"
 				hx-target="closest li"
 				hx-swap="outerHTML"
-				hx-confirm="Are you sure ?"
+				hx-confirm={ i18n.T(ctx, "Are you sure ?") }
 				{ ui.HxAction(deleteLocation)... }
 			>
 				@ui.Icon(ui.IconProps{Value: "delete"})

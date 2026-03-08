@@ -9,7 +9,10 @@ import (
 
 func NewNotFoundHanlder() http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		RenderError(w, r, 404, fmt.Errorf("route not found: %s", r.RequestURI))
+		RenderProblem(w, r, NewProblem(
+			fmt.Errorf("route not found: %s", r.RequestURI),
+			WithStatus(http.StatusNotFound),
+		))
 	})
 }
 
@@ -17,7 +20,7 @@ func NewLogoutHandler(store sess.SessionStore) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		err := store.Erase(r, w)
 		if err != nil {
-			RenderError(w, r, 500, err)
+			RenderProblem(w, r, NewProblem(err))
 			return
 		}
 

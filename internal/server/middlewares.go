@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/throskam/kix/auth"
 	"github.com/throskam/kix/htmx"
+	"github.com/throskam/kix/i18n"
 	"github.com/throskam/kix/sess"
 	"github.com/throskam/memo/internal/lib"
 	"github.com/throskam/memo/internal/server/handlers"
@@ -19,7 +20,7 @@ func Session(
 	store sess.SessionStore,
 ) func(http.Handler) http.Handler {
 	handleError := func(w http.ResponseWriter, r *http.Request, err error) {
-		handlers.RenderError(w, r, 500, err)
+		handlers.RenderProblem(w, r, handlers.NewProblem(err))
 	}
 
 	return sess.Sessionizer(store, handleError)
@@ -64,7 +65,7 @@ func Authenticate(
 		if errors.Is(err, auth.ErrJWTClaimsParseFailure) {
 			err1 := store.Erase(r, w)
 			if err1 != nil {
-				handlers.RenderError(w, r, 500, err1)
+				handlers.RenderProblem(w, r, handlers.NewProblem(err1))
 				return
 			}
 
@@ -75,7 +76,7 @@ func Authenticate(
 			return
 		}
 
-		handlers.RenderError(w, r, 500, err)
+		handlers.RenderProblem(w, r, handlers.NewProblem(err))
 	}
 
 	return auth.Authenticate(identify, handleError)
@@ -99,7 +100,16 @@ func Authenticated() func(http.Handler) http.Handler {
 
 func CSRF() func(http.Handler) http.Handler {
 	handleError := func(w http.ResponseWriter, r *http.Request, err error) {
-		handlers.RenderError(w, r, 500, err)
+		if errors.Is(err, auth.ErrCSRFTokenMismatch) {
+			handlers.RenderProblem(w, r, handlers.NewProblem(
+				err,
+				handlers.WithStatus(http.StatusForbidden),
+				handlers.WithDetail(i18n.T(r.Context(), "Your request could not be verified. Refresh the page and try again.")),
+			))
+			return
+		}
+
+		handlers.RenderProblem(w, r, handlers.NewProblem(err))
 	}
 
 	return auth.CSRF(handleError)

@@ -43,7 +43,7 @@ func (c *ProfileController) InfoSave(w http.ResponseWriter, r *http.Request) {
 
 	user, err := c.us.Update(r.Context(), user)
 	if err != nil {
-		RenderError(w, r, 500, err)
+		RenderProblem(w, r, NewProblem(err))
 		return
 	}
 

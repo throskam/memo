@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/throskam/kix/htmx"
+	"github.com/throskam/kix/i18n"
 	"github.com/throskam/memo/internal/lib"
 	"github.com/throskam/memo/internal/views/pages"
 )
@@ -26,7 +28,7 @@ func NewHomeController(ps *lib.ProjectService, ts *lib.TopicService) *HomeContro
 func (c *HomeController) PageGet(w http.ResponseWriter, r *http.Request) {
 	projects, err := c.ps.ListByOwnerWithRoot(r.Context(), lib.MustGetUser(r.Context()))
 	if err != nil {
-		RenderError(w, r, 500, err)
+		RenderProblem(w, r, NewProblem(err))
 		return
 	}
 
@@ -36,7 +38,7 @@ func (c *HomeController) PageGet(w http.ResponseWriter, r *http.Request) {
 func (c *HomeController) ProjectListGet(w http.ResponseWriter, r *http.Request) {
 	projects, err := c.ps.ListByOwnerWithRoot(r.Context(), lib.MustGetUser(r.Context()))
 	if err != nil {
-		RenderError(w, r, 500, err)
+		RenderProblem(w, r, NewProblem(err))
 		return
 	}
 
@@ -64,7 +66,7 @@ func (c *HomeController) ProjectCreateSubmit(w http.ResponseWriter, r *http.Requ
 
 	project, err := c.ps.Create(r.Context(), project)
 	if err != nil {
-		RenderError(w, r, 500, err)
+		RenderProblem(w, r, NewProblem(err))
 		return
 	}
 
@@ -79,7 +81,7 @@ func (c *HomeController) ProjectCreateSubmit(w http.ResponseWriter, r *http.Requ
 
 	_, err = c.ts.Create(r.Context(), root)
 	if err != nil {
-		RenderError(w, r, 500, err)
+		RenderProblem(w, r, NewProblem(err))
 		return
 	}
 
@@ -91,24 +93,37 @@ func (c *HomeController) ProjectCreateSubmit(w http.ResponseWriter, r *http.Requ
 func (c *HomeController) ProjectItemDelete(w http.ResponseWriter, r *http.Request) {
 	projectID, err := uuid.Parse(r.FormValue("project"))
 	if err != nil {
-		RenderError(w, r, 500, err)
+		RenderProblem(w, r, NewProblem(err))
 		return
 	}
 
 	project, err := c.ps.Get(r.Context(), projectID)
 	if err != nil {
-		RenderError(w, r, 500, err)
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	if project == nil {
+		RenderProblem(w, r, NewProblem(
+			fmt.Errorf("project not found"),
+			WithStatus(http.StatusNotFound),
+			WithDetail(i18n.T(r.Context(), "The requested project could not be found.")),
+		))
 		return
 	}
 
 	if err = c.ps.Can(lib.MustGetUser(r.Context()), project); err != nil {
-		RenderError(w, r, 403, err)
+		RenderProblem(w, r, NewProblem(
+			err,
+			WithStatus(http.StatusForbidden),
+			WithDetail(i18n.T(r.Context(), "You do not have permission to delete this project.")),
+		))
 		return
 	}
 
 	err = c.ps.Remove(r.Context(), project)
 	if err != nil {
-		RenderError(w, r, 500, err)
+		RenderProblem(w, r, NewProblem(err))
 		return
 	}
 

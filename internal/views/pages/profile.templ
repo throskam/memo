@@ -73,7 +73,7 @@ func (f ProfileInfoEditForm) Validate(p *message.Printer) url.Values {
 	}
 
 	if len(f.Username) > 30 {
-		validation.Add("username", p.Sprintf("The username should be less than %d characters", 10))
+		validation.Add("username", p.Sprintf("The username should be less than %d characters", 30))
 	}
 
 	return validation
