@@ -45,6 +45,46 @@ func (c *HomeController) ProjectListGet(w http.ResponseWriter, r *http.Request) 
 	Render(w, r, pages.HomeProjectList(pages.HomeProjectListProps{Projects: projects}))
 }
 
+func (c *HomeController) ProjectItemDelete(w http.ResponseWriter, r *http.Request) {
+	projectID, err := uuid.Parse(r.FormValue("project"))
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	project, err := c.ps.Get(r.Context(), projectID)
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	if project == nil {
+		RenderProblem(w, r, NewProblem(
+			fmt.Errorf("project not found"),
+			WithStatus(http.StatusNotFound),
+			WithDetail(i18n.T(r.Context(), "The requested project could not be found.")),
+		))
+		return
+	}
+
+	if err = c.ps.Can(lib.MustGetUser(r.Context()), project); err != nil {
+		RenderProblem(w, r, NewProblem(
+			err,
+			WithStatus(http.StatusForbidden),
+			WithDetail(i18n.T(r.Context(), "You do not have permission to delete this project.")),
+		))
+		return
+	}
+
+	err = c.ps.Remove(r.Context(), project)
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	w.WriteHeader(204)
+}
+
 func (c *HomeController) ProjectCreateSubmit(w http.ResponseWriter, r *http.Request) {
 	form := htmx.NewFormFromRequest(r, &pages.HomeProjectCreateForm{})
 
@@ -88,44 +128,4 @@ func (c *HomeController) ProjectCreateSubmit(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("HX-Trigger", "project-created")
 
 	Render(w, r, pages.HomeProjectCreate(pages.HomeProjectCreateProps{Form: htmx.NewForm(&pages.HomeProjectCreateForm{})}))
-}
-
-func (c *HomeController) ProjectItemDelete(w http.ResponseWriter, r *http.Request) {
-	projectID, err := uuid.Parse(r.FormValue("project"))
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	project, err := c.ps.Get(r.Context(), projectID)
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	if project == nil {
-		RenderProblem(w, r, NewProblem(
-			fmt.Errorf("project not found"),
-			WithStatus(http.StatusNotFound),
-			WithDetail(i18n.T(r.Context(), "The requested project could not be found.")),
-		))
-		return
-	}
-
-	if err = c.ps.Can(lib.MustGetUser(r.Context()), project); err != nil {
-		RenderProblem(w, r, NewProblem(
-			err,
-			WithStatus(http.StatusForbidden),
-			WithDetail(i18n.T(r.Context(), "You do not have permission to delete this project.")),
-		))
-		return
-	}
-
-	err = c.ps.Remove(r.Context(), project)
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	w.WriteHeader(204)
 }

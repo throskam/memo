@@ -26,6 +26,22 @@ func (c *ProfileController) PageGet(w http.ResponseWriter, r *http.Request) {
 	Render(w, r, pages.ProfilePage(pages.ProfilePageProps{User: lib.MustGetUser(r.Context())}))
 }
 
+func (c *ProfileController) InfoGet(w http.ResponseWriter, r *http.Request) {
+	user := lib.MustGetUser(r.Context())
+
+	Render(w, r, pages.ProfileInfo(pages.ProfileInfoProps{User: user}))
+}
+
+func (c *ProfileController) InfoEdit(w http.ResponseWriter, r *http.Request) {
+	user := lib.MustGetUser(r.Context())
+
+	form := htmx.NewForm(&pages.ProfileInfoEditForm{
+		Username: user.Username,
+	})
+
+	Render(w, r, pages.ProfileInfoEdit(pages.ProfileInfoEditProps{User: user, Form: form}))
+}
+
 func (c *ProfileController) InfoSave(w http.ResponseWriter, r *http.Request) {
 	user := lib.MustGetUser(r.Context())
 
@@ -55,20 +71,4 @@ func (c *ProfileController) InfoSave(w http.ResponseWriter, r *http.Request) {
 			return err
 		}),
 	))
-}
-
-func (c *ProfileController) InfoGet(w http.ResponseWriter, r *http.Request) {
-	user := lib.MustGetUser(r.Context())
-
-	Render(w, r, pages.ProfileInfo(pages.ProfileInfoProps{User: user}))
-}
-
-func (c *ProfileController) InfoEdit(w http.ResponseWriter, r *http.Request) {
-	user := lib.MustGetUser(r.Context())
-
-	form := htmx.NewForm(&pages.ProfileInfoEditForm{
-		Username: user.Username,
-	})
-
-	Render(w, r, pages.ProfileInfoEdit(pages.ProfileInfoEditProps{User: user, Form: form}))
 }
