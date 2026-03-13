@@ -74,10 +74,10 @@ func NewServer(ctx context.Context) *http.Server {
 
 	r := ki.NewRouter()
 
+	r.Use(middlewares.RequestLogger())
 	r.Use(middlewares.Recoverer())
 	r.Use(middlewares.RequestID())
 	r.Use(middlewares.RealIP())
-	r.Use(middlewares.RequestLogger())
 	r.Use(middlewares.ContentCharset("utf-8"))
 	r.Use(middlewares.ContentType("application/x-www-form-urlencoded"))
 	r.Use(middlewares.ContentEncoding())
