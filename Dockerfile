@@ -1,4 +1,4 @@
-FROM golang:1.24-bullseye AS base
+FROM golang:1.26.1-trixie AS base
 
 WORKDIR /opt/app
 
