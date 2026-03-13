@@ -1572,7 +1572,7 @@ func TopicDescendantCreate(props TopicDescendantCreateProps) templ.Component {
 			Placeholder:        i18n.T(ctx, "My topic"),
 			Value:              props.Form.Data.Title,
 			ValidationMessages: props.Form.Validation["title"],
-			CTA:                "Create",
+			CTA:                i18n.T(ctx, "Create"),
 			Attrs: templ.Attributes{
 				"x-data":       "",
 				"x-shortcut.a": "$el.focus()",

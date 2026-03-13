@@ -43,7 +43,7 @@ var messageKeyToIndex = map[string]int{
 	"About us":       21,
 	"Are you sure ?": 36,
 	"Cancel":         46,
-	"Cannot move topics because it would create a cycle.": 17,
+	"Cannot move topics because it would create a cycle.": 15,
 	"Connect":             0,
 	"Content":             55,
 	"Create":              35,
@@ -62,7 +62,7 @@ var messageKeyToIndex = map[string]int{
 	"My project": 34,
 	"My topic":   59,
 	"Not Found":  3,
-	"One or more selected topics could not be found.": 18,
+	"One or more selected topics could not be found.": 16,
 	"Overview":                    39,
 	"Owner":                       49,
 	"Passwordless Authentication": 23,
@@ -72,14 +72,14 @@ var messageKeyToIndex = map[string]int{
 	"Send Magic Link":             28,
 	"Sent! Check your email for the magic link.":       29,
 	"The content should be less than %d characters":    54,
-	"The destination parent topic could not be found.": 16,
-	"The destination topic could not be found.":        14,
+	"The destination parent topic could not be found.": 14,
+	"The destination topic could not be found.":        12,
 	"The email is invalid":                             26,
 	"The email is required":                            25,
 	"The name is required":                             31,
 	"The name should be less than %d characters":       32,
 	"The parent is required":                           58,
-	"The project for this topic could not be found.":   13,
+	"The project for this topic could not be found.":   18,
 	"The requested parent topic could not be found.":   11,
 	"The requested project could not be found.":        5,
 	"The requested topic could not be found.":          8,
@@ -94,12 +94,12 @@ var messageKeyToIndex = map[string]int{
 	"Welcome to your new productivity sidekick!\nWe’re here to help you get more done, without all the unnecessary fluff.\nKeep it simple, stay organized, and let’s crush those to-do lists together.\nLet’s make productivity less of a hassle and more of a habit!": 22,
 	"You do not have permission to access this project.":              7,
 	"You do not have permission to access this topic.":                9,
-	"You do not have permission to create topics here.":               12,
+	"You do not have permission to create topics here.":               20,
 	"You do not have permission to delete this project.":              6,
-	"You do not have permission to delete this topic.":                20,
+	"You do not have permission to delete this topic.":                19,
 	"You do not have permission to edit this topic.":                  10,
-	"You do not have permission to move one or more selected topics.": 19,
-	"You do not have permission to move topics in this area.":         15,
+	"You do not have permission to move one or more selected topics.": 17,
+	"You do not have permission to move topics in this area.":         13,
 }
 
 var en_USIndex = []uint32{ // 62 elements
@@ -107,9 +107,9 @@ var en_USIndex = []uint32{ // 62 elements
 	0x00000000, 0x00000008, 0x0000002b, 0x00000035,
 	0x0000003f, 0x00000055, 0x0000007f, 0x000000b2,
 	0x000000e5, 0x0000010d, 0x0000013e, 0x0000016d,
-	0x0000019c, 0x000001ce, 0x000001fd, 0x00000227,
-	0x0000025f, 0x00000290, 0x000002c4, 0x000002f4,
-	0x00000334, 0x00000365, 0x0000036e, 0x00000472,
+	0x0000019c, 0x000001c6, 0x000001fe, 0x0000022f,
+	0x00000263, 0x00000293, 0x000002d3, 0x00000302,
+	0x00000333, 0x00000365, 0x0000036e, 0x00000472,
 	0x0000048e, 0x000005c2, 0x000005d8, 0x000005ed,
 	0x000005fb, 0x0000060b, 0x00000636, 0x0000063b,
 	// Entry 20 - 3F
@@ -130,42 +130,42 @@ const en_USData string = "" + // Size: 2151 bytes
 	"ve permission to access this project.\x02The requested topic could not b" +
 	"e found.\x02You do not have permission to access this topic.\x02You do n" +
 	"ot have permission to edit this topic.\x02The requested parent topic cou" +
-	"ld not be found.\x02You do not have permission to create topics here." +
-	"\x02The project for this topic could not be found.\x02The destination to" +
-	"pic could not be found.\x02You do not have permission to move topics in " +
-	"this area.\x02The destination parent topic could not be found.\x02Cannot" +
-	" move topics because it would create a cycle.\x02One or more selected to" +
-	"pics could not be found.\x02You do not have permission to move one or mo" +
-	"re selected topics.\x02You do not have permission to delete this topic." +
-	"\x02About us\x02Welcome to your new productivity sidekick!\x0aWe’re here" +
-	" to help you get more done, without all the unnecessary fluff.\x0aKeep i" +
-	"t simple, stay organized, and let’s crush those to-do lists together." +
-	"\x0aLet’s make productivity less of a hassle and more of a habit!\x02Pas" +
-	"swordless Authentication\x02Just enter your email, and we’ll send you a " +
-	"magic link to sign in securely. No need to remember complicated password" +
-	"s or create an account. This method is fast, safe, and respects your pri" +
-	"vacy—we only use your email to send the login link. Check your inbox, cl" +
-	"ick the link, and you’re in. That’s it!\x02The email is required\x02The " +
-	"email is invalid\x02Email Address\x02Send Magic Link\x02Sent! Check your" +
-	" email for the magic link.\x02Home\x02The name is required\x02The name s" +
-	"hould be less than %[1]d characters\x02Project's name\x02My project\x02C" +
-	"reate\x02Are you sure ?\x02Profile\x02Edit\x02Overview\x02Username\x02Cr" +
-	"eated at\x02The username is required\x02The username should be less than" +
-	" %[1]d characters\x02Discard unsaved changes ?\x02Save\x02Cancel\x02Titl" +
-	"e\x02%[1]s's overview\x02Owner\x02Topic count\x02The title is required" +
-	"\x02The title should be less than %[1]d characters\x02Topic's title\x02T" +
-	"he content should be less than %[1]d characters\x02Content\x02Delete thi" +
-	"s topic and its %[1]d descendants ?\x02Delete this topic ?\x02The parent" +
-	" is required\x02My topic\x02Logout"
+	"ld not be found.\x02The destination topic could not be found.\x02You do " +
+	"not have permission to move topics in this area.\x02The destination pare" +
+	"nt topic could not be found.\x02Cannot move topics because it would crea" +
+	"te a cycle.\x02One or more selected topics could not be found.\x02You do" +
+	" not have permission to move one or more selected topics.\x02The project" +
+	" for this topic could not be found.\x02You do not have permission to del" +
+	"ete this topic.\x02You do not have permission to create topics here.\x02" +
+	"About us\x02Welcome to your new productivity sidekick!\x0aWe’re here to " +
+	"help you get more done, without all the unnecessary fluff.\x0aKeep it si" +
+	"mple, stay organized, and let’s crush those to-do lists together.\x0aLet" +
+	"’s make productivity less of a hassle and more of a habit!\x02Password" +
+	"less Authentication\x02Just enter your email, and we’ll send you a magic" +
+	" link to sign in securely. No need to remember complicated passwords or " +
+	"create an account. This method is fast, safe, and respects your privacy—" +
+	"we only use your email to send the login link. Check your inbox, click t" +
+	"he link, and you’re in. That’s it!\x02The email is required\x02The email" +
+	" is invalid\x02Email Address\x02Send Magic Link\x02Sent! Check your emai" +
+	"l for the magic link.\x02Home\x02The name is required\x02The name should" +
+	" be less than %[1]d characters\x02Project's name\x02My project\x02Create" +
+	"\x02Are you sure ?\x02Profile\x02Edit\x02Overview\x02Username\x02Created" +
+	" at\x02The username is required\x02The username should be less than %[1]" +
+	"d characters\x02Discard unsaved changes ?\x02Save\x02Cancel\x02Title\x02" +
+	"%[1]s's overview\x02Owner\x02Topic count\x02The title is required\x02The" +
+	" title should be less than %[1]d characters\x02Topic's title\x02The cont" +
+	"ent should be less than %[1]d characters\x02Content\x02Delete this topic" +
+	" and its %[1]d descendants ?\x02Delete this topic ?\x02The parent is req" +
+	"uired\x02My topic\x02Logout"
 
 var fr_FRIndex = []uint32{ // 62 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000000d, 0x00000038, 0x00000041,
 	0x0000004d, 0x00000067, 0x0000008b, 0x000000c3,
 	0x000000fe, 0x00000121, 0x0000015b, 0x00000191,
-	0x000001bb, 0x000001f5, 0x00000225, 0x0000024e,
-	0x00000297, 0x000002c7, 0x00000308, 0x00000341,
-	0x00000395, 0x000003cc, 0x000003de, 0x000004fb,
+	0x000001bb, 0x000001e4, 0x0000022d, 0x0000025d,
+	0x0000029e, 0x000002d7, 0x0000032b, 0x0000035b,
+	0x00000392, 0x000003cc, 0x000003de, 0x000004fb,
 	0x0000051e, 0x000006da, 0x000006ee, 0x00000704,
 	0x00000713, 0x0000072b, 0x00000762, 0x0000076a,
 	// Entry 20 - 3F
@@ -186,15 +186,15 @@ const fr_FRData string = "" + // Size: 2539 bytes
 	"\x02Vous n’avez pas la permission d’accéder à ce projet.\x02Le sujet dem" +
 	"andé est introuvable.\x02Vous n’avez pas la permission d’accéder à ce su" +
 	"jet.\x02Vous n’avez pas la permission de modifier ce sujet.\x02Le sujet " +
-	"parent demandé est introuvable.\x02Vous n’avez pas la permission de crée" +
-	"r des sujets ici.\x02Le projet associé à ce sujet est introuvable.\x02Le" +
-	" sujet de destination est introuvable.\x02Vous n’avez pas la permission " +
-	"de déplacer des sujets dans cette zone.\x02Le sujet parent de destinatio" +
-	"n est introuvable.\x02Impossible de déplacer les sujets, car cela créera" +
-	"it un cycle.\x02Un ou plusieurs sujets sélectionnés sont introuvables." +
-	"\x02Vous n’avez pas la permission de déplacer un ou plusieurs sujets sél" +
-	"ectionnés.\x02Vous n’avez pas la permission de supprimer ce sujet.\x02À " +
-	"propos de nous\x02Bienvenue à votre nouveau compagnon de productivité !" +
+	"parent demandé est introuvable.\x02Le sujet de destination est introuvab" +
+	"le.\x02Vous n’avez pas la permission de déplacer des sujets dans cette z" +
+	"one.\x02Le sujet parent de destination est introuvable.\x02Impossible de" +
+	" déplacer les sujets, car cela créerait un cycle.\x02Un ou plusieurs suj" +
+	"ets sélectionnés sont introuvables.\x02Vous n’avez pas la permission de " +
+	"déplacer un ou plusieurs sujets sélectionnés.\x02Le projet associé à ce " +
+	"sujet est introuvable.\x02Vous n’avez pas la permission de supprimer ce " +
+	"sujet.\x02Vous n’avez pas la permission de créer des sujets ici.\x02À pr" +
+	"opos de nous\x02Bienvenue à votre nouveau compagnon de productivité !" +
 	"\x0aNous sommes là pour vous aider à en faire plus, sans tout le superfl" +
 	"u inutile.\x0aRestez simple, restez organisé, et ensemble, écrasons ces " +
 	"listes de tâches.\x0aFaisons de la productivité moins une corvée et plus" +
@@ -218,4 +218,4 @@ const fr_FRData string = "" + // Size: 2539 bytes
 	"\x02Contenu\x02Supprimer ce sujet et ses %[1]d descendants ?\x02Supprime" +
 	"r ce sujet ?\x02Le parent est requis\x02Mon sujet\x02Se déconnecter"
 
-	// Total table size 5234 bytes (5KiB); checksum: 6BF364E8
+	// Total table size 5234 bytes (5KiB); checksum: 3D4B7560
