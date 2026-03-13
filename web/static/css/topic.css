@@ -7,6 +7,10 @@
     width: auto;
   }
 
+  .tiptap.ProseMirror {
+    min-height: 100px;
+  }
+
   .topic-list-create {
 
     /* fix creation form validation errors */
