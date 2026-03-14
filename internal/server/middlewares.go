@@ -57,6 +57,10 @@ func Authenticate(
 			return nil, fmt.Errorf("failed to get user [ID: %v]: %w", userID, err)
 		}
 
+		if user == nil {
+			return nil, fmt.Errorf("user not found [ID: %v]", userID)
+		}
+
 		return user, nil
 	}
 
