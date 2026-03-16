@@ -51,12 +51,15 @@ templ Textarea(props TextareaProps) {
 		id={ props.ID }
 		name={ props.Name }
 		placeholder={ props.Placeholder }
-		value={ props.Value }
 		if len(props.ValidationMessages) > 0 {
 			aria-invalid="true"
 			aria-describe-by={ describeby(props.ID) }
 		}
-	></textarea>
+		x-init="$el.style.height = 'auto'; $el.style.height = $el.scrollHeight + 'px'"
+		style="overflow:hidden"
+	>
+	{ props.Value }
+	</textarea>
 	@Validation(ValidationProps{ID: describeby(props.ID), Messages: props.ValidationMessages})
 }
 

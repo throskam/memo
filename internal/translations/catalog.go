@@ -45,7 +45,7 @@ var messageKeyToIndex = map[string]int{
 	"Cancel":         46,
 	"Cannot move topics because it would create a cycle.": 15,
 	"Connect":             0,
-	"Content":             55,
+	"Content":             54,
 	"Create":              35,
 	"Created at":          41,
 	"Delete this topic ?": 57,
@@ -71,7 +71,7 @@ var messageKeyToIndex = map[string]int{
 	"Save":                        45,
 	"Send Magic Link":             28,
 	"Sent! Check your email for the magic link.":       29,
-	"The content should be less than %d characters":    54,
+	"The content should be less than %d characters":    55,
 	"The destination parent topic could not be found.": 14,
 	"The destination topic could not be found.":        12,
 	"The email is invalid":                             26,
@@ -118,7 +118,7 @@ var en_USIndex = []uint32{ // 62 elements
 	0x000006c4, 0x000006cd, 0x000006d8, 0x000006f1,
 	0x00000723, 0x0000073d, 0x00000742, 0x00000749,
 	0x0000074f, 0x00000760, 0x00000766, 0x00000772,
-	0x00000788, 0x000007b7, 0x000007c5, 0x000007f6,
+	0x00000788, 0x000007b7, 0x000007c5, 0x000007cd,
 	0x000007fe, 0x0000082c, 0x00000840, 0x00000857,
 	0x00000860, 0x00000867,
 } // Size: 272 bytes
@@ -153,10 +153,10 @@ const en_USData string = "" + // Size: 2151 bytes
 	" at\x02The username is required\x02The username should be less than %[1]" +
 	"d characters\x02Discard unsaved changes ?\x02Save\x02Cancel\x02Title\x02" +
 	"%[1]s's overview\x02Owner\x02Topic count\x02The title is required\x02The" +
-	" title should be less than %[1]d characters\x02Topic's title\x02The cont" +
-	"ent should be less than %[1]d characters\x02Content\x02Delete this topic" +
-	" and its %[1]d descendants ?\x02Delete this topic ?\x02The parent is req" +
-	"uired\x02My topic\x02Logout"
+	" title should be less than %[1]d characters\x02Topic's title\x02Content" +
+	"\x02The content should be less than %[1]d characters\x02Delete this topi" +
+	"c and its %[1]d descendants ?\x02Delete this topic ?\x02The parent is re" +
+	"quired\x02My topic\x02Logout"
 
 var fr_FRIndex = []uint32{ // 62 elements
 	// Entry 0 - 1F
@@ -174,7 +174,7 @@ var fr_FRIndex = []uint32{ // 62 elements
 	0x000007f6, 0x00000808, 0x00000812, 0x00000832,
 	0x00000870, 0x0000089e, 0x000008aa, 0x000008b2,
 	0x000008b8, 0x000008c9, 0x000008d7, 0x000008e8,
-	0x000008fc, 0x0000092e, 0x0000093d, 0x00000971,
+	0x000008fc, 0x0000092e, 0x0000093d, 0x00000945,
 	0x00000979, 0x000009a7, 0x000009bc, 0x000009d1,
 	0x000009db, 0x000009eb,
 } // Size: 272 bytes
@@ -214,8 +214,8 @@ const fr_FRData string = "" + // Size: 2539 bytes
 	"\x02Annuler les modifications non enregistrées ?\x02Enregistrer\x02Annul" +
 	"er\x02Titre\x02Aperçu de %[1]s\x02Propriétaire\x02Nombre de sujets\x02Le" +
 	" titre est requis\x02Le titre doit contenir moins de %[1]d caractères" +
-	"\x02Titre du sujet\x02Le contenu doit contenir moins de %[1]d caractères" +
-	"\x02Contenu\x02Supprimer ce sujet et ses %[1]d descendants ?\x02Supprime" +
+	"\x02Titre du sujet\x02Contenu\x02Le contenu doit contenir moins de %[1]d" +
+	" caractères\x02Supprimer ce sujet et ses %[1]d descendants ?\x02Supprime" +
 	"r ce sujet ?\x02Le parent est requis\x02Mon sujet\x02Se déconnecter"
 
-	// Total table size 5234 bytes (5KiB); checksum: 3D4B7560
+	// Total table size 5234 bytes (5KiB); checksum: 930320F

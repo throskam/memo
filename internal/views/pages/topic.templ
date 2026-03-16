@@ -24,7 +24,7 @@ templ TopicPage(props TopicPageProps) {
 		<div class="topic-container">
 			@TopicBreadcrumb(TopicBreadcrumbProps{Topic: props.Topic, Ancestors: props.Ancestors})
 			@TopicInfo(TopicInfoProps{Topic: props.Topic})
-			@TopicContent(TopicContentProps{Topic: props.Topic, Form: htmx.NewForm(&TopicContentForm{Content: props.Topic.Content})})
+			@TopicContent(TopicContentProps{Topic: props.Topic})
 			@TopicToolbar(TopicToolbarProps{Topic: props.Topic})
 			@TopicDescendantList(TopicDescendantListProps{Topic: props.Topic, Descendants: props.Descendants, Level: 0})
 			@TopicDescendantCreate(TopicDescendantCreateProps{Form: htmx.NewForm(&TopicDescendantCreateForm{ParentID: props.Topic.ID})})
@@ -226,33 +226,15 @@ templ TopicInfoEdit(props TopicInfoEditProps) {
 	</form>
 }
 
-type TopicContentForm struct {
-	Content string
-}
-
-func (f *TopicContentForm) Parse(r *http.Request) {
-	f.Content = r.FormValue("content")
-}
-
-func (f *TopicContentForm) Validate(p *message.Printer) url.Values {
-	validation := url.Values{}
-
-	if len(f.Content) > 1000 {
-		validation.Add("content", p.Sprintf("The content should be less than %d characters", 1000))
-	}
-
-	return validation
-}
-
 type TopicContentProps struct {
 	Topic *lib.Topic
-	Form  *htmx.Form[*TopicContentForm]
 }
 
 templ TopicContent(props TopicContentProps) {
 	{{
 		expandLocation := lib.GetLocation(ctx, "topic:content:expand").WithQueryParam("topic", props.Topic.ID.String())
 		collapseLocation := lib.GetLocation(ctx, "topic:content:collapse").WithQueryParam("topic", props.Topic.ID.String())
+		editLocation := lib.GetLocation(ctx, "topic:content:edit").WithQueryParam("topic", props.Topic.ID.String())
 
 		session := sess.MustGetSession(ctx)
 
@@ -262,6 +244,11 @@ templ TopicContent(props TopicContentProps) {
 		@ui.CardHeader(ui.CardHeaderProps{Title: i18n.T(ctx, "Content")}) {
 			@ui.CardActions() {
 				if isExpanded {
+					@ui.CardAction(ui.CardActionProps{
+						Location: editLocation,
+					}) {
+						@ui.Icon(ui.IconProps{Value: "edit"})
+					}
 					@ui.CardAction(ui.CardActionProps{
 						Location: collapseLocation,
 					}) {
@@ -277,29 +264,71 @@ templ TopicContent(props TopicContentProps) {
 			}
 		}
 		if isExpanded {
-			@ui.Editor(ui.EditorProps{
+			@ui.Markdown(ui.MarkdownProps{
 				Value: props.Topic.Content,
-			}) {
-				@TopicContentData(TopicContentDataProps{
-					Topic: props.Topic,
-					Form:  props.Form,
-				})
-			}
+			})
 		}
 	}
 }
 
-type TopicContentDataProps struct {
-	Topic *lib.Topic
-	Form  *htmx.Form[*TopicContentForm]
+type TopicContentEditForm struct {
+	Content string
 }
 
-templ TopicContentData(props TopicContentDataProps) {
-	{{ saveLocation := lib.GetLocation(ctx, "topic:content:save").WithQueryParam("topic", props.Topic.ID.String()) }}
-	@ui.EditorForm(ui.EditorFormProps{
-		ValidationMessages: props.Form.Validation["content"],
-		SaveLocation:       saveLocation,
-	})
+func (f *TopicContentEditForm) Parse(r *http.Request) {
+	f.Content = r.FormValue("content")
+}
+
+func (f *TopicContentEditForm) Validate(p *message.Printer) url.Values {
+	validation := url.Values{}
+
+	if len(f.Content) > 1000 {
+		validation.Add("content", p.Sprintf("The content should be less than %d characters", 1000))
+	}
+
+	return validation
+}
+
+type TopicContentEditProps struct {
+	Topic *lib.Topic
+	Form  *htmx.Form[*TopicContentEditForm]
+}
+
+templ TopicContentEdit(props TopicContentEditProps) {
+	{{
+		saveLocation := lib.GetLocation(ctx, "topic:content:save").WithQueryParam("topic", props.Topic.ID.String())
+		cancelLocation := lib.GetLocation(ctx, "topic:content:get").WithQueryParam("topic", props.Topic.ID.String())
+	}}
+	<form hx-swap="outerHTML" { ui.HxAction(saveLocation)... } data-confirm-redirect={ i18n.T(ctx, "Discard unsaved changes ?") }>
+		@ui.Card() {
+			@ui.CardHeader(ui.CardHeaderProps{Title: i18n.T(ctx, "Content")}) {
+				@ui.CardActions() {
+					@ui.CardActionSubmit(ui.CardActionSubmitProps{
+						Attrs: templ.Attributes{
+							"x-data":       "",
+							"x-shortcut.w": "$el.click()",
+						},
+					}) {
+						{ i18n.T(ctx, "Save") }
+					}
+					@ui.CardAction(ui.CardActionProps{
+						Location: cancelLocation,
+						Attrs: templ.Attributes{
+							"hx-target":    "closest form",
+							"x-data":       "",
+							"x-shortcut.u": "$el.click()",
+						},
+					}) {
+						{ i18n.T(ctx, "Cancel") }
+					}
+				}
+			}
+			@ui.Editor(ui.EditorProps{
+				Value: props.Topic.Content,
+				ValidationMessages: props.Form.Validation["content"],
+			})
+		}
+	</form>
 }
 
 type TopicDescendantListProps struct {

@@ -87,7 +87,6 @@ func NewServer(ctx context.Context) *http.Server {
 			"'self'",
 			"'unsafe-eval'",
 			"https://unpkg.com",
-			"https://esm.sh",
 			"https://cdn.jsdelivr.net",
 		},
 		"style-src": {

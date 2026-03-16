@@ -110,6 +110,8 @@ func addRoutes(
 				})
 
 				r.Route("/content", func(r ki.Router) {
+					r.Get("/{$}", topicController.ContentGet, ki.WithName("topic:content:get"))
+					r.Get("/edit", topicController.ContentEdit, ki.WithName("topic:content:edit"))
 					r.Post("/collapse", topicController.ContentCollapse, ki.WithName("topic:content:collapse"))
 					r.Post("/expand", topicController.ContentExpand, ki.WithName("topic:content:expand"))
 

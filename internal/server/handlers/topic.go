@@ -206,6 +206,79 @@ func (c *TopicController) InfoSave(w http.ResponseWriter, r *http.Request) {
 	))
 }
 
+func (c *TopicController) ContentGet(w http.ResponseWriter, r *http.Request) {
+	topicID, err := uuid.Parse(r.FormValue("topic"))
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	topic, err := c.ts.Get(r.Context(), topicID)
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	if topic == nil {
+		RenderProblem(w, r, NewProblem(
+			fmt.Errorf("topic not found"),
+			WithStatus(http.StatusNotFound),
+			WithDetail(i18n.T(r.Context(), "The requested topic could not be found.")),
+		))
+		return
+	}
+
+	if err = c.ts.Can(lib.MustGetUser(r.Context()), topic); err != nil {
+		RenderProblem(w, r, NewProblem(
+			err,
+			WithStatus(http.StatusForbidden),
+			WithDetail(i18n.T(r.Context(), "You do not have permission to edit this topic.")),
+		))
+		return
+	}
+
+	Render(w, r, pages.TopicContent(pages.TopicContentProps{
+		Topic: topic,
+	}))
+}
+
+func (c *TopicController) ContentEdit(w http.ResponseWriter, r *http.Request) {
+	topicID, err := uuid.Parse(r.FormValue("topic"))
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	topic, err := c.ts.Get(r.Context(), topicID)
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	if topic == nil {
+		RenderProblem(w, r, NewProblem(
+			fmt.Errorf("topic not found"),
+			WithStatus(http.StatusNotFound),
+			WithDetail(i18n.T(r.Context(), "The requested topic could not be found.")),
+		))
+		return
+	}
+
+	if err = c.ts.Can(lib.MustGetUser(r.Context()), topic); err != nil {
+		RenderProblem(w, r, NewProblem(
+			err,
+			WithStatus(http.StatusForbidden),
+			WithDetail(i18n.T(r.Context(), "You do not have permission to edit this topic.")),
+		))
+		return
+	}
+
+	Render(w, r, pages.TopicContentEdit(pages.TopicContentEditProps{
+		Topic: topic,
+		Form:  htmx.NewForm(&pages.TopicContentEditForm{Content: topic.Content}),
+	}))
+}
+
 func (c *TopicController) ContentExpand(w http.ResponseWriter, r *http.Request) {
 	topicID, err := uuid.Parse(r.FormValue("topic"))
 	if err != nil {
@@ -232,9 +305,6 @@ func (c *TopicController) ContentExpand(w http.ResponseWriter, r *http.Request) 
 
 	Render(w, r, pages.TopicContent(pages.TopicContentProps{
 		Topic: topic,
-		Form: htmx.NewForm(&pages.TopicContentForm{
-			Content: topic.Content,
-		}),
 	}))
 }
 
@@ -264,9 +334,6 @@ func (c *TopicController) ContentCollapse(w http.ResponseWriter, r *http.Request
 
 	Render(w, r, pages.TopicContent(pages.TopicContentProps{
 		Topic: topic,
-		Form: htmx.NewForm(&pages.TopicContentForm{
-			Content: topic.Content,
-		}),
 	}))
 }
 
@@ -301,12 +368,12 @@ func (c *TopicController) ContentSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	form := htmx.NewFormFromRequest(r, &pages.TopicContentForm{})
+	form := htmx.NewFormFromRequest(r, &pages.TopicContentEditForm{})
 
 	if !form.OK() {
 		w.WriteHeader(422)
 
-		Render(w, r, pages.TopicContentData(pages.TopicContentDataProps{
+		Render(w, r, pages.TopicContentEdit(pages.TopicContentEditProps{
 			Topic: topic,
 			Form:  form,
 		}))
@@ -322,9 +389,8 @@ func (c *TopicController) ContentSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Render(w, r, pages.TopicContentData(pages.TopicContentDataProps{
+	Render(w, r, pages.TopicContent(pages.TopicContentProps{
 		Topic: topic,
-		Form:  form,
 	}))
 }
 

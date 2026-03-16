@@ -1,6 +1,3 @@
-import { Editor } from "https://esm.sh/@tiptap/core";
-import StarterKit from "https://esm.sh/@tiptap/starter-kit";
-
 document.addEventListener("alpine:init", () => {
   // Keep focus between htmx swaps if the active element has an id.
   let lastActiveElementId = null;
@@ -41,33 +38,6 @@ document.addEventListener("alpine:init", () => {
         ).format(new Date(this.$el.getAttribute("datetime")));
 
         this.$el.textContent = formatted;
-      },
-    };
-  });
-
-  // Initialize tiptap editor.
-  Alpine.data("editor", (content) => {
-    return {
-      init() {
-        const node = this;
-
-        const delay = 500;
-
-        let delayTimeout;
-
-        this.editor = new Editor({
-          element: this.$refs.element,
-          extensions: [StarterKit],
-          content,
-          onUpdate({ editor }) {
-            clearTimeout(delayTimeout);
-
-            delayTimeout = setTimeout(() => {
-              node.$refs.content.value = editor.getHTML();
-              node.$refs.submit.click();
-            }, delay);
-          },
-        });
       },
     };
   });

@@ -1,0 +1,13 @@
+package ui
+
+import "github.com/throskam/memo/internal/lib"
+
+type MarkdownProps struct {
+	Value string
+}
+
+templ Markdown(props MarkdownProps) {
+	<div class="markdown">
+	@templ.Raw(lib.RenderMarkdown(props.Value))
+	</div>
+}
