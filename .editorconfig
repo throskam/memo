@@ -8,6 +8,10 @@ indent_size = 4
 insert_final_newline = false
 trim_trailing_whitespace = true
 
+# Go
+[*.go]
+insert_final_newline = true
+
 # HTML
 [*.{htm,html}]
 indent_style = space
