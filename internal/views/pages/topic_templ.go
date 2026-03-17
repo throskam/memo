@@ -524,7 +524,7 @@ func (f *TopicInfoEditForm) Validate(p *message.Printer) url.Values {
 		validation.Add("title", p.Sprintf("The title is required"))
 	}
 
-	topicTitleMaxLength := 50
+	topicTitleMaxLength := 200
 
 	if len(f.Title) > topicTitleMaxLength {
 		validation.Add("title", p.Sprintf("The title should be less than %d characters", topicTitleMaxLength))
@@ -1632,7 +1632,7 @@ func (f *TopicDescendantCreateForm) Validate(p *message.Printer) url.Values {
 		validation.Add("title", p.Sprintf("The title is required"))
 	}
 
-	topicTitleMaxLength := 50
+	topicTitleMaxLength := 200
 
 	if len(f.Title) > topicTitleMaxLength {
 		validation.Add("title", p.Sprintf("The title should be less than %d characters", topicTitleMaxLength))
