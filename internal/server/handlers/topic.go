@@ -72,7 +72,7 @@ func (c *TopicController) PageGet(w http.ResponseWriter, r *http.Request) {
 	Render(w, r, pages.TopicPage(pages.TopicPageProps{Topic: topic, Ancestors: ancestors, Descendants: descendants}))
 }
 
-func (c *TopicController) InfoGet(w http.ResponseWriter, r *http.Request) {
+func (c *TopicController) OverviewGet(w http.ResponseWriter, r *http.Request) {
 	topicID, err := uuid.Parse(r.FormValue("topic"))
 	if err != nil {
 		RenderProblem(w, r, NewProblem(err))
@@ -103,10 +103,10 @@ func (c *TopicController) InfoGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Render(w, r, pages.TopicInfo(pages.TopicInfoProps{Topic: topic}))
+	Render(w, r, pages.TopicOverview(pages.TopicOverviewProps{Topic: topic}))
 }
 
-func (c *TopicController) InfoEdit(w http.ResponseWriter, r *http.Request) {
+func (c *TopicController) OverviewEdit(w http.ResponseWriter, r *http.Request) {
 	topicID, err := uuid.Parse(r.FormValue("topic"))
 	if err != nil {
 		RenderProblem(w, r, NewProblem(err))
@@ -137,13 +137,73 @@ func (c *TopicController) InfoEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Render(w, r, pages.TopicInfoEdit(pages.TopicInfoEditProps{
+	sess.MustGetSession(r.Context()).Remove("collapsed-overview", topic.ID.String())
+
+	Render(w, r, pages.TopicOverviewEdit(pages.TopicOverviewEditProps{
 		Topic: topic,
-		Form:  htmx.NewForm(&pages.TopicInfoEditForm{Title: topic.Title}),
+		Form:  htmx.NewForm(&pages.TopicOverviewEditForm{Title: topic.Title, Content: topic.Content}),
 	}))
 }
 
-func (c *TopicController) InfoSave(w http.ResponseWriter, r *http.Request) {
+func (c *TopicController) OverviewExpand(w http.ResponseWriter, r *http.Request) {
+	topicID, err := uuid.Parse(r.FormValue("topic"))
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	topic, err := c.ts.Get(r.Context(), topicID)
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	if topic == nil {
+		RenderProblem(w, r, NewProblem(
+			fmt.Errorf("topic not found"),
+			WithStatus(http.StatusNotFound),
+			WithDetail(i18n.T(r.Context(), "The requested topic could not be found.")),
+		))
+		return
+	}
+
+	sess.MustGetSession(r.Context()).Remove("collapsed-overview", topic.ID.String())
+
+	Render(w, r, pages.TopicOverview(pages.TopicOverviewProps{
+		Topic: topic,
+	}))
+}
+
+func (c *TopicController) OverviewCollapse(w http.ResponseWriter, r *http.Request) {
+	topicID, err := uuid.Parse(r.FormValue("topic"))
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	topic, err := c.ts.Get(r.Context(), topicID)
+	if err != nil {
+		RenderProblem(w, r, NewProblem(err))
+		return
+	}
+
+	if topic == nil {
+		RenderProblem(w, r, NewProblem(
+			fmt.Errorf("topic not found"),
+			WithStatus(http.StatusNotFound),
+			WithDetail(i18n.T(r.Context(), "The requested topic could not be found.")),
+		))
+		return
+	}
+
+	sess.MustGetSession(r.Context()).Add("collapsed-overview", topic.ID.String())
+
+	Render(w, r, pages.TopicOverview(pages.TopicOverviewProps{
+		Topic: topic,
+	}))
+}
+
+func (c *TopicController) OverviewSave(w http.ResponseWriter, r *http.Request) {
 	topicID, err := uuid.Parse(r.FormValue("topic"))
 	if err != nil {
 		RenderProblem(w, r, NewProblem(err))
@@ -174,17 +234,18 @@ func (c *TopicController) InfoSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	form := htmx.NewFormFromRequest(r, &pages.TopicInfoEditForm{})
+	form := htmx.NewFormFromRequest(r, &pages.TopicOverviewEditForm{})
 
 	if !form.OK() {
 		w.WriteHeader(422)
 
-		Render(w, r, pages.TopicInfoEdit(pages.TopicInfoEditProps{Topic: topic, Form: form}))
+		Render(w, r, pages.TopicOverviewEdit(pages.TopicOverviewEditProps{Topic: topic, Form: form}))
 
 		return
 	}
 
 	topic.Title = form.Data.Title
+	topic.Content = form.Data.Content
 
 	topic, err = c.ts.Update(r.Context(), topic)
 	if err != nil {
@@ -198,200 +259,12 @@ func (c *TopicController) InfoSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Render(w, r, pages.TopicInfo(pages.TopicInfoProps{Topic: topic}))
+	Render(w, r, pages.TopicOverview(pages.TopicOverviewProps{Topic: topic}))
 
 	Render(w, r, ui.OOB(
 		"outerHTML:#breadcrumb",
 		pages.TopicBreadcrumb(pages.TopicBreadcrumbProps{Topic: topic, Ancestors: ancestors}),
 	))
-}
-
-func (c *TopicController) ContentGet(w http.ResponseWriter, r *http.Request) {
-	topicID, err := uuid.Parse(r.FormValue("topic"))
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	topic, err := c.ts.Get(r.Context(), topicID)
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	if topic == nil {
-		RenderProblem(w, r, NewProblem(
-			fmt.Errorf("topic not found"),
-			WithStatus(http.StatusNotFound),
-			WithDetail(i18n.T(r.Context(), "The requested topic could not be found.")),
-		))
-		return
-	}
-
-	if err = c.ts.Can(lib.MustGetUser(r.Context()), topic); err != nil {
-		RenderProblem(w, r, NewProblem(
-			err,
-			WithStatus(http.StatusForbidden),
-			WithDetail(i18n.T(r.Context(), "You do not have permission to edit this topic.")),
-		))
-		return
-	}
-
-	Render(w, r, pages.TopicContent(pages.TopicContentProps{
-		Topic: topic,
-	}))
-}
-
-func (c *TopicController) ContentEdit(w http.ResponseWriter, r *http.Request) {
-	topicID, err := uuid.Parse(r.FormValue("topic"))
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	topic, err := c.ts.Get(r.Context(), topicID)
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	if topic == nil {
-		RenderProblem(w, r, NewProblem(
-			fmt.Errorf("topic not found"),
-			WithStatus(http.StatusNotFound),
-			WithDetail(i18n.T(r.Context(), "The requested topic could not be found.")),
-		))
-		return
-	}
-
-	if err = c.ts.Can(lib.MustGetUser(r.Context()), topic); err != nil {
-		RenderProblem(w, r, NewProblem(
-			err,
-			WithStatus(http.StatusForbidden),
-			WithDetail(i18n.T(r.Context(), "You do not have permission to edit this topic.")),
-		))
-		return
-	}
-
-	Render(w, r, pages.TopicContentEdit(pages.TopicContentEditProps{
-		Topic: topic,
-		Form:  htmx.NewForm(&pages.TopicContentEditForm{Content: topic.Content}),
-	}))
-}
-
-func (c *TopicController) ContentExpand(w http.ResponseWriter, r *http.Request) {
-	topicID, err := uuid.Parse(r.FormValue("topic"))
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	topic, err := c.ts.Get(r.Context(), topicID)
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	if topic == nil {
-		RenderProblem(w, r, NewProblem(
-			fmt.Errorf("topic not found"),
-			WithStatus(http.StatusNotFound),
-			WithDetail(i18n.T(r.Context(), "The requested topic could not be found.")),
-		))
-		return
-	}
-
-	sess.MustGetSession(r.Context()).Add("expanded-content", topic.ID.String())
-
-	Render(w, r, pages.TopicContent(pages.TopicContentProps{
-		Topic: topic,
-	}))
-}
-
-func (c *TopicController) ContentCollapse(w http.ResponseWriter, r *http.Request) {
-	topicID, err := uuid.Parse(r.FormValue("topic"))
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	topic, err := c.ts.Get(r.Context(), topicID)
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	if topic == nil {
-		RenderProblem(w, r, NewProblem(
-			fmt.Errorf("topic not found"),
-			WithStatus(http.StatusNotFound),
-			WithDetail(i18n.T(r.Context(), "The requested topic could not be found.")),
-		))
-		return
-	}
-
-	sess.MustGetSession(r.Context()).Remove("expanded-content", topic.ID.String())
-
-	Render(w, r, pages.TopicContent(pages.TopicContentProps{
-		Topic: topic,
-	}))
-}
-
-func (c *TopicController) ContentSave(w http.ResponseWriter, r *http.Request) {
-	topicID, err := uuid.Parse(r.FormValue("topic"))
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	topic, err := c.ts.Get(r.Context(), topicID)
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	if topic == nil {
-		RenderProblem(w, r, NewProblem(
-			fmt.Errorf("topic not found"),
-			WithStatus(http.StatusNotFound),
-			WithDetail(i18n.T(r.Context(), "The requested topic could not be found.")),
-		))
-		return
-	}
-
-	if err = c.ts.Can(lib.MustGetUser(r.Context()), topic); err != nil {
-		RenderProblem(w, r, NewProblem(
-			err,
-			WithStatus(http.StatusForbidden),
-			WithDetail(i18n.T(r.Context(), "You do not have permission to edit this topic.")),
-		))
-		return
-	}
-
-	form := htmx.NewFormFromRequest(r, &pages.TopicContentEditForm{})
-
-	if !form.OK() {
-		w.WriteHeader(422)
-
-		Render(w, r, pages.TopicContentEdit(pages.TopicContentEditProps{
-			Topic: topic,
-			Form:  form,
-		}))
-
-		return
-	}
-
-	topic.Content = form.Data.Content
-
-	topic, err = c.ts.Update(r.Context(), topic)
-	if err != nil {
-		RenderProblem(w, r, NewProblem(err))
-		return
-	}
-
-	Render(w, r, pages.TopicContent(pages.TopicContentProps{
-		Topic: topic,
-	}))
 }
 
 func (c *TopicController) ToolbarCollapseRecursive(w http.ResponseWriter, r *http.Request) {

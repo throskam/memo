@@ -103,3 +103,27 @@ dl {
     background-color: var(--table-row-stripped-background-color);
   }
 }
+
+.description-list-item-wide {
+  display: contents;
+
+  dt {
+    grid-column-start: 1;
+    grid-column-end: -1;
+    padding: 15px 0;
+  }
+
+  dd {
+    grid-column-start: 1;
+    grid-column-end: -1;
+    margin: 0;
+  }
+}
+
+.markdown,
+#editor {
+  min-height: 100px;
+  padding: 10px;
+  border-radius: var(--pico-border-radius);
+  background-color: var(--pico-code-background-color);
+}

@@ -16,3 +16,12 @@ templ DescriptionListItem(props DescriptionListItemProps) {
 		{ children... }
 	</dd>
 }
+
+templ DescriptionListItemWide(props DescriptionListItemProps) {
+	<div class="description-list-item-wide">
+		<dt>{ props.Label }</dt>
+		<dd>
+			{ children... }
+		</dd>
+	</div>
+}

@@ -44,7 +44,7 @@ var messageKeyToIndex = map[string]int{
 	"Are you sure ?": 35,
 	"Cannot move topics because it would create a cycle.": 15,
 	"Connect":             0,
-	"Content":             50,
+	"Content":             47,
 	"Created at":          39,
 	"Delete this topic ?": 53,
 	"Delete this topic and its %d descendants ?": 52,
@@ -67,7 +67,7 @@ var messageKeyToIndex = map[string]int{
 	"Project's name":              33,
 	"Send Magic Link":             28,
 	"Sent! Check your email for the magic link.":       29,
-	"The content should be less than %d characters":    51,
+	"The content should be less than %d characters":    50,
 	"The destination parent topic could not be found.": 14,
 	"The destination topic could not be found.":        12,
 	"The email is invalid":                             26,
@@ -79,13 +79,13 @@ var messageKeyToIndex = map[string]int{
 	"The requested parent topic could not be found.":   11,
 	"The requested project could not be found.":        5,
 	"The requested topic could not be found.":          8,
-	"The title is required":                            47,
-	"The title should be less than %d characters":      48,
+	"The title is required":                            48,
+	"The title should be less than %d characters":      49,
 	"The username is required":                         40,
 	"The username should be less than %d characters":   41,
 	"Title":         43,
 	"Topic count":   46,
-	"Topic's title": 49,
+	"Topic's title": 51,
 	"Username":      38,
 	"Welcome to your new productivity sidekick!\nWe’re here to help you get more done, without all the unnecessary fluff.\nKeep it simple, stay organized, and let’s crush those to-do lists together.\nLet’s make productivity less of a hassle and more of a habit!": 22,
 	"You do not have permission to access this project.":              7,
@@ -113,7 +113,7 @@ var en_USIndex = []uint32{ // 58 elements
 	0x000006a7, 0x000006af, 0x000006b8, 0x000006c1,
 	0x000006cc, 0x000006e5, 0x00000717, 0x00000731,
 	0x00000737, 0x00000748, 0x0000074e, 0x0000075a,
-	0x00000770, 0x0000079f, 0x000007ad, 0x000007b5,
+	0x00000762, 0x00000778, 0x000007a7, 0x000007d8,
 	0x000007e6, 0x00000814, 0x00000828, 0x0000083f,
 	0x00000848, 0x0000084f,
 } // Size: 256 bytes
@@ -147,10 +147,10 @@ const en_USData string = "" + // Size: 2127 bytes
 	"u sure ?\x02Profile\x02Overview\x02Username\x02Created at\x02The usernam" +
 	"e is required\x02The username should be less than %[1]d characters\x02Di" +
 	"scard unsaved changes ?\x02Title\x02%[1]s's overview\x02Owner\x02Topic c" +
-	"ount\x02The title is required\x02The title should be less than %[1]d cha" +
-	"racters\x02Topic's title\x02Content\x02The content should be less than %" +
-	"[1]d characters\x02Delete this topic and its %[1]d descendants ?\x02Dele" +
-	"te this topic ?\x02The parent is required\x02My topic\x02Logout"
+	"ount\x02Content\x02The title is required\x02The title should be less tha" +
+	"n %[1]d characters\x02The content should be less than %[1]d characters" +
+	"\x02Topic's title\x02Delete this topic and its %[1]d descendants ?\x02De" +
+	"lete this topic ?\x02The parent is required\x02My topic\x02Logout"
 
 var fr_FRIndex = []uint32{ // 58 elements
 	// Entry 0 - 1F
@@ -167,7 +167,7 @@ var fr_FRIndex = []uint32{ // 58 elements
 	0x000007d7, 0x000007de, 0x000007e6, 0x000007f8,
 	0x00000802, 0x00000822, 0x00000860, 0x0000088e,
 	0x00000894, 0x000008a5, 0x000008b3, 0x000008c4,
-	0x000008d8, 0x0000090a, 0x00000919, 0x00000921,
+	0x000008cc, 0x000008e0, 0x00000912, 0x00000946,
 	0x00000955, 0x00000983, 0x00000998, 0x000009ad,
 	0x000009b7, 0x000009c7,
 } // Size: 256 bytes
@@ -205,10 +205,10 @@ const fr_FRData string = "" + // Size: 2503 bytes
 	"d'utilisateur\x02Créé le\x02Le nom d'utilisateur est requis\x02Le nom d'" +
 	"utilisateur doit contenir moins de %[1]d caractères\x02Annuler les modif" +
 	"ications non enregistrées ?\x02Titre\x02Aperçu de %[1]s\x02Propriétaire" +
-	"\x02Nombre de sujets\x02Le titre est requis\x02Le titre doit contenir mo" +
-	"ins de %[1]d caractères\x02Titre du sujet\x02Contenu\x02Le contenu doit " +
-	"contenir moins de %[1]d caractères\x02Supprimer ce sujet et ses %[1]d de" +
+	"\x02Nombre de sujets\x02Contenu\x02Le titre est requis\x02Le titre doit " +
+	"contenir moins de %[1]d caractères\x02Le contenu doit contenir moins de " +
+	"%[1]d caractères\x02Titre du sujet\x02Supprimer ce sujet et ses %[1]d de" +
 	"scendants ?\x02Supprimer ce sujet ?\x02Le parent est requis\x02Mon sujet" +
 	"\x02Se déconnecter"
 
-	// Total table size 5142 bytes (5KiB); checksum: 512766B0
+	// Total table size 5142 bytes (5KiB); checksum: 86EEAF17

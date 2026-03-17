@@ -7,11 +7,6 @@
     width: auto;
   }
 
-  .markdown,
-  #editor {
-    min-height: 100px;
-  }
-
   .topic-list-create {
 
     /* fix creation form validation errors */

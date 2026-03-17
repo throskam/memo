@@ -102,20 +102,14 @@ func addRoutes(
 			r.Route("/topic", func(r ki.Router) {
 				r.Get("/{topic}", topicController.PageGet, ki.WithName("topic:page:get"))
 
-				r.Route("/info", func(r ki.Router) {
-					r.Get("/{$}", topicController.InfoGet, ki.WithName("topic:info:get"))
-					r.Get("/edit", topicController.InfoEdit, ki.WithName("topic:info:edit"))
+				r.Route("/overview", func(r ki.Router) {
+					r.Get("/{$}", topicController.OverviewGet, ki.WithName("topic:overview:get"))
+					r.Get("/edit", topicController.OverviewEdit, ki.WithName("topic:overview:edit"))
 
-					r.Post("/save", topicController.InfoSave, ki.WithName("topic:info:save"))
-				})
+					r.Post("/collapse", topicController.OverviewCollapse, ki.WithName("topic:overview:collapse"))
+					r.Post("/expand", topicController.OverviewExpand, ki.WithName("topic:overview:expand"))
 
-				r.Route("/content", func(r ki.Router) {
-					r.Get("/{$}", topicController.ContentGet, ki.WithName("topic:content:get"))
-					r.Get("/edit", topicController.ContentEdit, ki.WithName("topic:content:edit"))
-					r.Post("/collapse", topicController.ContentCollapse, ki.WithName("topic:content:collapse"))
-					r.Post("/expand", topicController.ContentExpand, ki.WithName("topic:content:expand"))
-
-					r.Post("/save", topicController.ContentSave, ki.WithName("topic:content:save"))
+					r.Post("/save", topicController.OverviewSave, ki.WithName("topic:overview:save"))
 				})
 
 				r.Route("/descendant-list", func(r ki.Router) {

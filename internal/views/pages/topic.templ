@@ -23,8 +23,7 @@ templ TopicPage(props TopicPageProps) {
 	@ui.Page() {
 		<div class="topic-container">
 			@TopicBreadcrumb(TopicBreadcrumbProps{Topic: props.Topic, Ancestors: props.Ancestors})
-			@TopicInfo(TopicInfoProps{Topic: props.Topic})
-			@TopicContent(TopicContentProps{Topic: props.Topic})
+			@TopicOverview(TopicOverviewProps{Topic: props.Topic})
 			@TopicToolbar(TopicToolbarProps{Topic: props.Topic})
 			@TopicDescendantList(TopicDescendantListProps{Topic: props.Topic, Descendants: props.Descendants, Level: 0})
 			@TopicDescendantCreate(TopicDescendantCreateProps{Form: htmx.NewForm(&TopicDescendantCreateForm{ParentID: props.Topic.ID})})
@@ -112,48 +111,84 @@ templ TopicToolbar(props TopicToolbarProps) {
 	</div>
 }
 
-type TopicInfoProps struct {
+type TopicOverviewProps struct {
 	Topic *lib.Topic
 }
 
-templ TopicInfo(props TopicInfoProps) {
-	{{ editLocation := lib.GetLocation(ctx, "topic:info:edit").WithQueryParam("topic", props.Topic.ID.String()) }}
+templ TopicOverview(props TopicOverviewProps) {
+	{{
+		expandLocation := lib.GetLocation(ctx, "topic:overview:expand").WithQueryParam("topic", props.Topic.ID.String())
+		collapseLocation := lib.GetLocation(ctx, "topic:overview:collapse").WithQueryParam("topic", props.Topic.ID.String())
+		editLocation := lib.GetLocation(ctx, "topic:overview:edit").WithQueryParam("topic", props.Topic.ID.String())
+
+		session := sess.MustGetSession(ctx)
+
+		isExpanded := !session.Has("collapsed-overview", props.Topic.ID.String())
+	}}
 	@ui.Card() {
-		@ui.CardHeader(ui.CardHeaderProps{
-			Title: i18n.T(ctx, "Overview"),
-		}) {
+		@ui.CardHeader(ui.CardHeaderProps{Title: i18n.T(ctx, "Overview")}) {
 			@ui.CardActions() {
-				@ui.CardAction(ui.CardActionProps{
-					Location: editLocation,
-					Attrs: templ.Attributes{
-						"x-data":       "",
-						"x-shortcut.e": "$el.click()",
-					},
-				}) {
-					@ui.Icon(ui.IconProps{Value: "edit"})
+				if isExpanded {
+					@ui.CardAction(ui.CardActionProps{
+						Location: editLocation,
+						Attrs: templ.Attributes{
+							"x-data":       "",
+							"x-shortcut.e": "$el.click()",
+						},
+					}) {
+						@ui.Icon(ui.IconProps{Value: "edit"})
+					}
+					@ui.CardAction(ui.CardActionProps{
+						Location: collapseLocation,
+						Attrs: templ.Attributes{
+							"x-data":       "",
+							"x-shortcut.shift.and.e": "$el.click()",
+						},
+					}) {
+						@ui.Icon(ui.IconProps{Value: "unfold_less"})
+					}
+				} else {
+					@ui.CardAction(ui.CardActionProps{
+						Location: expandLocation,
+						Attrs: templ.Attributes{
+							"x-data":       "",
+							"x-shortcut.shift.and.e": "$el.click()",
+						},
+					}) {
+						@ui.Icon(ui.IconProps{Value: "unfold_more"})
+					}
 				}
 			}
 		}
-		@ui.DescriptionList() {
-			@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Title")}) {
-				{ props.Topic.Title }
-			}
-			@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Created at")}) {
-				@ui.Time(ui.TimeProps{Value: props.Topic.CreatedAt})
+		if isExpanded {
+			@ui.DescriptionList() {
+				@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Title")}) {
+					{ props.Topic.Title }
+				}
+				@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Created at")}) {
+					@ui.Time(ui.TimeProps{Value: props.Topic.CreatedAt})
+				}
+				@ui.DescriptionListItemWide(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Content")}) {
+					@ui.Markdown(ui.MarkdownProps{
+						Value: props.Topic.Content,
+					})
+				}
 			}
 		}
 	}
 }
 
-type TopicInfoEditForm struct {
-	Title string
+type TopicOverviewEditForm struct {
+	Title   string
+	Content string
 }
 
-func (f *TopicInfoEditForm) Parse(r *http.Request) {
+func (f *TopicOverviewEditForm) Parse(r *http.Request) {
 	f.Title = r.FormValue("title")
+	f.Content = r.FormValue("content")
 }
 
-func (f *TopicInfoEditForm) Validate(p *message.Printer) url.Values {
+func (f *TopicOverviewEditForm) Validate(p *message.Printer) url.Values {
 	validation := url.Values{}
 
 	if f.Title == "" {
@@ -166,18 +201,24 @@ func (f *TopicInfoEditForm) Validate(p *message.Printer) url.Values {
 		validation.Add("title", p.Sprintf("The title should be less than %d characters", topicTitleMaxLength))
 	}
 
+	contentMaxLength := 1000
+
+	if len(f.Content) > contentMaxLength {
+		validation.Add("content", p.Sprintf("The content should be less than %d characters", contentMaxLength))
+	}
+
 	return validation
 }
 
-type TopicInfoEditProps struct {
+type TopicOverviewEditProps struct {
 	Topic *lib.Topic
-	Form  *htmx.Form[*TopicInfoEditForm]
+	Form  *htmx.Form[*TopicOverviewEditForm]
 }
 
-templ TopicInfoEdit(props TopicInfoEditProps) {
+templ TopicOverviewEdit(props TopicOverviewEditProps) {
 	{{
-		saveLocation := lib.GetLocation(ctx, "topic:info:save").WithQueryParam("topic", props.Topic.ID.String())
-		cancelLocation := lib.GetLocation(ctx, "topic:info:get").WithQueryParam("topic", props.Topic.ID.String())
+		saveLocation := lib.GetLocation(ctx, "topic:overview:save").WithQueryParam("topic", props.Topic.ID.String())
+		cancelLocation := lib.GetLocation(ctx, "topic:overview:get").WithQueryParam("topic", props.Topic.ID.String())
 	}}
 	<form hx-swap="outerHTML" { ui.HxAction(saveLocation)... } data-confirm-redirect={ i18n.T(ctx, "Discard unsaved changes ?") }>
 		@ui.Card() {
@@ -223,114 +264,13 @@ templ TopicInfoEdit(props TopicInfoEditProps) {
 				@ui.DescriptionListItem(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Created at")}) {
 					@ui.Time(ui.TimeProps{Value: props.Topic.CreatedAt})
 				}
-			}
-		}
-	</form>
-}
-
-type TopicContentProps struct {
-	Topic *lib.Topic
-}
-
-templ TopicContent(props TopicContentProps) {
-	{{
-		expandLocation := lib.GetLocation(ctx, "topic:content:expand").WithQueryParam("topic", props.Topic.ID.String())
-		collapseLocation := lib.GetLocation(ctx, "topic:content:collapse").WithQueryParam("topic", props.Topic.ID.String())
-		editLocation := lib.GetLocation(ctx, "topic:content:edit").WithQueryParam("topic", props.Topic.ID.String())
-
-		session := sess.MustGetSession(ctx)
-
-		isExpanded := session.Has("expanded-content", props.Topic.ID.String())
-	}}
-	@ui.Card() {
-		@ui.CardHeader(ui.CardHeaderProps{Title: i18n.T(ctx, "Content")}) {
-			@ui.CardActions() {
-				if isExpanded {
-					@ui.CardAction(ui.CardActionProps{
-						Location: editLocation,
-					}) {
-						@ui.Icon(ui.IconProps{Value: "edit"})
-					}
-					@ui.CardAction(ui.CardActionProps{
-						Location: collapseLocation,
-					}) {
-						@ui.Icon(ui.IconProps{Value: "unfold_more"})
-					}
-				} else {
-					@ui.CardAction(ui.CardActionProps{
-						Location: expandLocation,
-					}) {
-						@ui.Icon(ui.IconProps{Value: "unfold_less"})
-					}
+				@ui.DescriptionListItemWide(ui.DescriptionListItemProps{Label: i18n.T(ctx, "Content")}) {
+					@ui.Editor(ui.EditorProps{
+						Value:              props.Form.Data.Content,
+						ValidationMessages: props.Form.Validation["content"],
+					})
 				}
 			}
-		}
-		if isExpanded {
-			@ui.Markdown(ui.MarkdownProps{
-				Value: props.Topic.Content,
-			})
-		}
-	}
-}
-
-type TopicContentEditForm struct {
-	Content string
-}
-
-func (f *TopicContentEditForm) Parse(r *http.Request) {
-	f.Content = r.FormValue("content")
-}
-
-func (f *TopicContentEditForm) Validate(p *message.Printer) url.Values {
-	validation := url.Values{}
-
-	contentMaxLength := 1000
-
-	if len(f.Content) > contentMaxLength {
-		validation.Add("content", p.Sprintf("The content should be less than %d characters", contentMaxLength))
-	}
-
-	return validation
-}
-
-type TopicContentEditProps struct {
-	Topic *lib.Topic
-	Form  *htmx.Form[*TopicContentEditForm]
-}
-
-templ TopicContentEdit(props TopicContentEditProps) {
-	{{
-		saveLocation := lib.GetLocation(ctx, "topic:content:save").WithQueryParam("topic", props.Topic.ID.String())
-		cancelLocation := lib.GetLocation(ctx, "topic:content:get").WithQueryParam("topic", props.Topic.ID.String())
-	}}
-	<form hx-swap="outerHTML" { ui.HxAction(saveLocation)... } data-confirm-redirect={ i18n.T(ctx, "Discard unsaved changes ?") }>
-		@ui.Card() {
-			@ui.CardHeader(ui.CardHeaderProps{Title: i18n.T(ctx, "Content")}) {
-				@ui.CardActions() {
-					@ui.CardActionSubmit(ui.CardActionSubmitProps{
-						Attrs: templ.Attributes{
-							"x-data":       "",
-							"x-shortcut.w": "$el.click()",
-						},
-					}) {
-						@ui.Icon(ui.IconProps{Value: "save"})
-					}
-					@ui.CardAction(ui.CardActionProps{
-						Location: cancelLocation,
-						Attrs: templ.Attributes{
-							"hx-target":    "closest form",
-							"x-data":       "",
-							"x-shortcut.u": "$el.click()",
-						},
-					}) {
-						@ui.Icon(ui.IconProps{Value: "close"})
-					}
-				}
-			}
-			@ui.Editor(ui.EditorProps{
-				Value: props.Topic.Content,
-				ValidationMessages: props.Form.Validation["content"],
-			})
 		}
 	</form>
 }
