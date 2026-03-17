@@ -10,6 +10,8 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 FROM base AS dev
 
+RUN apt-get update && apt-get install -y jq && rm -rf /var/lib/apt/lists/*
+
 ENV APP_ENV=development
 
 EXPOSE 8080

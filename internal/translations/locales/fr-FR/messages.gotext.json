@@ -202,19 +202,9 @@
       "translation": "Mon projet"
     },
     {
-      "id": "Create",
-      "message": "Create",
-      "translation": "Créer"
-    },
-    {
       "id": "Profile",
       "message": "Profile",
       "translation": "Profil"
-    },
-    {
-      "id": "Edit",
-      "message": "Edit",
-      "translation": "Modifier"
     },
     {
       "id": "Overview",
@@ -255,16 +245,6 @@
       "id": "Discard unsaved changes ?",
       "message": "Discard unsaved changes ?",
       "translation": "Annuler les modifications non enregistrées ?"
-    },
-    {
-      "id": "Save",
-      "message": "Save",
-      "translation": "Enregistrer"
-    },
-    {
-      "id": "Cancel",
-      "message": "Cancel",
-      "translation": "Annuler"
     },
     {
       "id": "Title",

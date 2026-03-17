@@ -72,6 +72,7 @@ type PromptProps struct {
 	Value              string
 	ValidationMessages []string
 	CTA                string
+	Icon               string
 	Attrs              templ.Attributes
 }
 
@@ -93,10 +94,13 @@ templ Prompt(props PromptProps) {
 			}
 			{ props.Attrs... }
 		/>
-		<input
-			type="submit"
-			value={ props.CTA }
-		/>
+		<button type="submit">
+			if props.Icon != "" {
+				@Icon(IconProps{Value: props.Icon})
+			} else {
+				{ props.CTA }
+			}
+		</button>
 	</fieldset>
 	@Validation(ValidationProps{ID: describeby(props.ID), Messages: props.ValidationMessages})
 }

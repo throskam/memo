@@ -38,7 +38,7 @@ templ ProfileInfo(props ProfileInfoProps) {
 						"x-shortcut.e": "$el.click()",
 					},
 				}) {
-					{ i18n.T(ctx, "Edit") }
+					@ui.Icon(ui.IconProps{Value: "edit"})
 				}
 			}
 		}
@@ -101,7 +101,7 @@ templ ProfileInfoEdit(props ProfileInfoEditProps) {
 							"x-shortcut.w": "$el.click()",
 						},
 					}) {
-						{ i18n.T(ctx, "Save") }
+						@ui.Icon(ui.IconProps{Value: "save"})
 					}
 					@ui.CardAction(ui.CardActionProps{
 						Location: showLocation,
@@ -111,7 +111,7 @@ templ ProfileInfoEdit(props ProfileInfoEditProps) {
 							"x-shortcut.u": "$el.click()",
 						},
 					}) {
-						{ i18n.T(ctx, "Cancel") }
+						@ui.Icon(ui.IconProps{Value: "close"})
 					}
 				}
 			}

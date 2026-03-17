@@ -39,58 +39,54 @@ func init() {
 }
 
 var messageKeyToIndex = map[string]int{
-	"%s's overview":  48,
+	"%s's overview":  44,
 	"About us":       21,
-	"Are you sure ?": 36,
-	"Cancel":         46,
+	"Are you sure ?": 35,
 	"Cannot move topics because it would create a cycle.": 15,
 	"Connect":             0,
-	"Content":             54,
-	"Create":              35,
-	"Created at":          41,
-	"Delete this topic ?": 57,
-	"Delete this topic and its %d descendants ?": 56,
-	"Discard unsaved changes ?":                  44,
-	"Edit":                                       38,
+	"Content":             50,
+	"Created at":          39,
+	"Delete this topic ?": 53,
+	"Delete this topic and its %d descendants ?": 52,
+	"Discard unsaved changes ?":                  42,
 	"Email Address":                              27,
 	"Follow the link to connect : %s":            1,
 	"Forbidden":                                  2,
 	"Home":                                       30,
 	"Internal Server Error":                      4,
 	"Just enter your email, and we’ll send you a magic link to sign in securely. No need to remember complicated passwords or create an account. This method is fast, safe, and respects your privacy—we only use your email to send the login link. Check your inbox, click the link, and you’re in. That’s it!": 24,
-	"Logout":     60,
+	"Logout":     56,
 	"My project": 34,
-	"My topic":   59,
+	"My topic":   55,
 	"Not Found":  3,
 	"One or more selected topics could not be found.": 16,
-	"Overview":                    39,
-	"Owner":                       49,
+	"Overview":                    37,
+	"Owner":                       45,
 	"Passwordless Authentication": 23,
-	"Profile":                     37,
+	"Profile":                     36,
 	"Project's name":              33,
-	"Save":                        45,
 	"Send Magic Link":             28,
 	"Sent! Check your email for the magic link.":       29,
-	"The content should be less than %d characters":    55,
+	"The content should be less than %d characters":    51,
 	"The destination parent topic could not be found.": 14,
 	"The destination topic could not be found.":        12,
 	"The email is invalid":                             26,
 	"The email is required":                            25,
 	"The name is required":                             31,
 	"The name should be less than %d characters":       32,
-	"The parent is required":                           58,
+	"The parent is required":                           54,
 	"The project for this topic could not be found.":   18,
 	"The requested parent topic could not be found.":   11,
 	"The requested project could not be found.":        5,
 	"The requested topic could not be found.":          8,
-	"The title is required":                            51,
-	"The title should be less than %d characters":      52,
-	"The username is required":                         42,
-	"The username should be less than %d characters":   43,
-	"Title":         47,
-	"Topic count":   50,
-	"Topic's title": 53,
-	"Username":      40,
+	"The title is required":                            47,
+	"The title should be less than %d characters":      48,
+	"The username is required":                         40,
+	"The username should be less than %d characters":   41,
+	"Title":         43,
+	"Topic count":   46,
+	"Topic's title": 49,
+	"Username":      38,
 	"Welcome to your new productivity sidekick!\nWe’re here to help you get more done, without all the unnecessary fluff.\nKeep it simple, stay organized, and let’s crush those to-do lists together.\nLet’s make productivity less of a hassle and more of a habit!": 22,
 	"You do not have permission to access this project.":              7,
 	"You do not have permission to access this topic.":                9,
@@ -102,7 +98,7 @@ var messageKeyToIndex = map[string]int{
 	"You do not have permission to move topics in this area.":         13,
 }
 
-var en_USIndex = []uint32{ // 62 elements
+var en_USIndex = []uint32{ // 58 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000008, 0x0000002b, 0x00000035,
 	0x0000003f, 0x00000055, 0x0000007f, 0x000000b2,
@@ -114,16 +110,15 @@ var en_USIndex = []uint32{ // 62 elements
 	0x000005fb, 0x0000060b, 0x00000636, 0x0000063b,
 	// Entry 20 - 3F
 	0x00000650, 0x0000067e, 0x0000068d, 0x00000698,
-	0x0000069f, 0x000006ae, 0x000006b6, 0x000006bb,
-	0x000006c4, 0x000006cd, 0x000006d8, 0x000006f1,
-	0x00000723, 0x0000073d, 0x00000742, 0x00000749,
-	0x0000074f, 0x00000760, 0x00000766, 0x00000772,
-	0x00000788, 0x000007b7, 0x000007c5, 0x000007cd,
-	0x000007fe, 0x0000082c, 0x00000840, 0x00000857,
-	0x00000860, 0x00000867,
-} // Size: 272 bytes
+	0x000006a7, 0x000006af, 0x000006b8, 0x000006c1,
+	0x000006cc, 0x000006e5, 0x00000717, 0x00000731,
+	0x00000737, 0x00000748, 0x0000074e, 0x0000075a,
+	0x00000770, 0x0000079f, 0x000007ad, 0x000007b5,
+	0x000007e6, 0x00000814, 0x00000828, 0x0000083f,
+	0x00000848, 0x0000084f,
+} // Size: 256 bytes
 
-const en_USData string = "" + // Size: 2151 bytes
+const en_USData string = "" + // Size: 2127 bytes
 	"\x02Connect\x02Follow the link to connect : %[1]s\x02Forbidden\x02Not Fo" +
 	"und\x02Internal Server Error\x02The requested project could not be found" +
 	".\x02You do not have permission to delete this project.\x02You do not ha" +
@@ -148,17 +143,16 @@ const en_USData string = "" + // Size: 2151 bytes
 	"he link, and you’re in. That’s it!\x02The email is required\x02The email" +
 	" is invalid\x02Email Address\x02Send Magic Link\x02Sent! Check your emai" +
 	"l for the magic link.\x02Home\x02The name is required\x02The name should" +
-	" be less than %[1]d characters\x02Project's name\x02My project\x02Create" +
-	"\x02Are you sure ?\x02Profile\x02Edit\x02Overview\x02Username\x02Created" +
-	" at\x02The username is required\x02The username should be less than %[1]" +
-	"d characters\x02Discard unsaved changes ?\x02Save\x02Cancel\x02Title\x02" +
-	"%[1]s's overview\x02Owner\x02Topic count\x02The title is required\x02The" +
-	" title should be less than %[1]d characters\x02Topic's title\x02Content" +
-	"\x02The content should be less than %[1]d characters\x02Delete this topi" +
-	"c and its %[1]d descendants ?\x02Delete this topic ?\x02The parent is re" +
-	"quired\x02My topic\x02Logout"
+	" be less than %[1]d characters\x02Project's name\x02My project\x02Are yo" +
+	"u sure ?\x02Profile\x02Overview\x02Username\x02Created at\x02The usernam" +
+	"e is required\x02The username should be less than %[1]d characters\x02Di" +
+	"scard unsaved changes ?\x02Title\x02%[1]s's overview\x02Owner\x02Topic c" +
+	"ount\x02The title is required\x02The title should be less than %[1]d cha" +
+	"racters\x02Topic's title\x02Content\x02The content should be less than %" +
+	"[1]d characters\x02Delete this topic and its %[1]d descendants ?\x02Dele" +
+	"te this topic ?\x02The parent is required\x02My topic\x02Logout"
 
-var fr_FRIndex = []uint32{ // 62 elements
+var fr_FRIndex = []uint32{ // 58 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000000d, 0x00000038, 0x00000041,
 	0x0000004d, 0x00000067, 0x0000008b, 0x000000c3,
@@ -170,16 +164,15 @@ var fr_FRIndex = []uint32{ // 62 elements
 	0x00000713, 0x0000072b, 0x00000762, 0x0000076a,
 	// Entry 20 - 3F
 	0x0000077c, 0x000007ac, 0x000007ba, 0x000007c5,
-	0x000007cc, 0x000007de, 0x000007e5, 0x000007ee,
-	0x000007f6, 0x00000808, 0x00000812, 0x00000832,
-	0x00000870, 0x0000089e, 0x000008aa, 0x000008b2,
-	0x000008b8, 0x000008c9, 0x000008d7, 0x000008e8,
-	0x000008fc, 0x0000092e, 0x0000093d, 0x00000945,
-	0x00000979, 0x000009a7, 0x000009bc, 0x000009d1,
-	0x000009db, 0x000009eb,
-} // Size: 272 bytes
+	0x000007d7, 0x000007de, 0x000007e6, 0x000007f8,
+	0x00000802, 0x00000822, 0x00000860, 0x0000088e,
+	0x00000894, 0x000008a5, 0x000008b3, 0x000008c4,
+	0x000008d8, 0x0000090a, 0x00000919, 0x00000921,
+	0x00000955, 0x00000983, 0x00000998, 0x000009ad,
+	0x000009b7, 0x000009c7,
+} // Size: 256 bytes
 
-const fr_FRData string = "" + // Size: 2539 bytes
+const fr_FRData string = "" + // Size: 2503 bytes
 	"\x02Se connecter\x02Suivez le lien pour vous connecter : %[1]s\x02Interd" +
 	"it\x02Introuvable\x02Erreur interne du serveur\x02Le projet demandé est " +
 	"introuvable.\x02Vous n’avez pas la permission de supprimer ce projet." +
@@ -208,14 +201,14 @@ const fr_FRData string = "" + // Size: 2539 bytes
 	"is\x02L'e-mail est invalide\x02Adresse e-mail\x02Envoyer le lien magique" +
 	"\x02Envoyé ! Vérifiez votre e-mail pour le lien magique.\x02Accueil\x02L" +
 	"e nom est requis\x02Le nom doit contenir moins de %[1]d caractères\x02No" +
-	"m du projet\x02Mon projet\x02Créer\x02Êtes-vous sûr ?\x02Profil\x02Modif" +
-	"ier\x02Aperçu\x02Nom d'utilisateur\x02Créé le\x02Le nom d'utilisateur es" +
-	"t requis\x02Le nom d'utilisateur doit contenir moins de %[1]d caractères" +
-	"\x02Annuler les modifications non enregistrées ?\x02Enregistrer\x02Annul" +
-	"er\x02Titre\x02Aperçu de %[1]s\x02Propriétaire\x02Nombre de sujets\x02Le" +
-	" titre est requis\x02Le titre doit contenir moins de %[1]d caractères" +
-	"\x02Titre du sujet\x02Contenu\x02Le contenu doit contenir moins de %[1]d" +
-	" caractères\x02Supprimer ce sujet et ses %[1]d descendants ?\x02Supprime" +
-	"r ce sujet ?\x02Le parent est requis\x02Mon sujet\x02Se déconnecter"
+	"m du projet\x02Mon projet\x02Êtes-vous sûr ?\x02Profil\x02Aperçu\x02Nom " +
+	"d'utilisateur\x02Créé le\x02Le nom d'utilisateur est requis\x02Le nom d'" +
+	"utilisateur doit contenir moins de %[1]d caractères\x02Annuler les modif" +
+	"ications non enregistrées ?\x02Titre\x02Aperçu de %[1]s\x02Propriétaire" +
+	"\x02Nombre de sujets\x02Le titre est requis\x02Le titre doit contenir mo" +
+	"ins de %[1]d caractères\x02Titre du sujet\x02Contenu\x02Le contenu doit " +
+	"contenir moins de %[1]d caractères\x02Supprimer ce sujet et ses %[1]d de" +
+	"scendants ?\x02Supprimer ce sujet ?\x02Le parent est requis\x02Mon sujet" +
+	"\x02Se déconnecter"
 
-	// Total table size 5234 bytes (5KiB); checksum: 930320F
+	// Total table size 5142 bytes (5KiB); checksum: 512766B0

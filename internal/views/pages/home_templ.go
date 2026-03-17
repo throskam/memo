@@ -214,7 +214,7 @@ func HomeProjectCreate(props HomeProjectCreateProps) templ.Component {
 			Placeholder:        i18n.T(ctx, "My project"),
 			Value:              props.Form.Data.Name,
 			ValidationMessages: props.Form.Validation["name"],
-			CTA:                i18n.T(ctx, "Create"),
+			Icon:               "add",
 			Attrs: templ.Attributes{
 				"x-data":       "",
 				"x-shortcut.a": "$el.focus()",

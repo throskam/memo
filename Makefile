@@ -10,6 +10,7 @@ db:
 .PHONY: translations
 translations:
 	go generate ./internal/translations/translations.go
+	./scripts/prune-translations.sh
 
 .PHONY: orm
 orm:
