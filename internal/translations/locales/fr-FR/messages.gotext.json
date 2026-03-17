@@ -177,17 +177,17 @@
       "translation": "Le nom est requis"
     },
     {
-      "id": "The name should be less than {50} characters",
-      "message": "The name should be less than {50} characters",
-      "translation": "Le nom doit contenir moins de {50} caractères",
+      "id": "The name should be less than {ProjectNameMaxLength} characters",
+      "message": "The name should be less than {ProjectNameMaxLength} characters",
+      "translation": "Le nom doit contenir moins de {ProjectNameMaxLength} caractères",
       "placeholders": [
         {
-          "id": "50",
+          "id": "ProjectNameMaxLength",
           "string": "%[1]d",
           "type": "int",
           "underlyingType": "int",
           "argNum": 1,
-          "expr": "50"
+          "expr": "projectNameMaxLength"
         }
       ]
     },
@@ -227,17 +227,17 @@
       "translation": "Le nom d'utilisateur est requis"
     },
     {
-      "id": "The username should be less than {30} characters",
-      "message": "The username should be less than {30} characters",
-      "translation": "Le nom d'utilisateur doit contenir moins de {30} caractères",
+      "id": "The username should be less than {UsernameMaxLength} characters",
+      "message": "The username should be less than {UsernameMaxLength} characters",
+      "translation": "Le nom d'utilisateur doit contenir moins de {UsernameMaxLength} caractères",
       "placeholders": [
         {
-          "id": "30",
+          "id": "UsernameMaxLength",
           "string": "%[1]d",
           "type": "int",
           "underlyingType": "int",
           "argNum": 1,
-          "expr": "30"
+          "expr": "usernameMaxLength"
         }
       ]
     },
@@ -282,17 +282,17 @@
       "translation": "Le titre est requis"
     },
     {
-      "id": "The title should be less than {50} characters",
-      "message": "The title should be less than {50} characters",
-      "translation": "Le titre doit contenir moins de {50} caractères",
+      "id": "The title should be less than {TopicTitleMaxLength} characters",
+      "message": "The title should be less than {TopicTitleMaxLength} characters",
+      "translation": "Le titre doit contenir moins de {TopicTitleMaxLength} caractères",
       "placeholders": [
         {
-          "id": "50",
+          "id": "TopicTitleMaxLength",
           "string": "%[1]d",
           "type": "int",
           "underlyingType": "int",
           "argNum": 1,
-          "expr": "50"
+          "expr": "topicTitleMaxLength"
         }
       ]
     },
@@ -302,24 +302,24 @@
       "translation": "Titre du sujet"
     },
     {
-      "id": "The content should be less than {1000} characters",
-      "message": "The content should be less than {1000} characters",
-      "translation": "Le contenu doit contenir moins de {1000} caractères",
+      "id": "Content",
+      "message": "Content",
+      "translation": "Contenu"
+    },
+    {
+      "id": "The content should be less than {ContentMaxLength} characters",
+      "message": "The content should be less than {ContentMaxLength} characters",
+      "translation": "Le contenu doit contenir moins de {ContentMaxLength} caractères",
       "placeholders": [
         {
-          "id": "1000",
+          "id": "ContentMaxLength",
           "string": "%[1]d",
           "type": "int",
           "underlyingType": "int",
           "argNum": 1,
-          "expr": "1000"
+          "expr": "contentMaxLength"
         }
       ]
-    },
-    {
-      "id": "Content",
-      "message": "Content",
-      "translation": "Contenu"
     },
     {
       "id": "Delete this topic and its {Descendants} descendants ?",

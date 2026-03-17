@@ -524,8 +524,10 @@ func (f *TopicInfoEditForm) Validate(p *message.Printer) url.Values {
 		validation.Add("title", p.Sprintf("The title is required"))
 	}
 
-	if len(f.Title) > 50 {
-		validation.Add("title", p.Sprintf("The title should be less than %d characters", 50))
+	topicTitleMaxLength := 50
+
+	if len(f.Title) > topicTitleMaxLength {
+		validation.Add("title", p.Sprintf("The title should be less than %d characters", topicTitleMaxLength))
 	}
 
 	return validation
@@ -574,7 +576,7 @@ func TopicInfoEdit(props TopicInfoEditProps) templ.Component {
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(i18n.T(ctx, "Discard unsaved changes ?"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 180, Col: 124}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 182, Col: 124}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -981,8 +983,10 @@ func (f *TopicContentEditForm) Parse(r *http.Request) {
 func (f *TopicContentEditForm) Validate(p *message.Printer) url.Values {
 	validation := url.Values{}
 
-	if len(f.Content) > 1000 {
-		validation.Add("content", p.Sprintf("The content should be less than %d characters", 1000))
+	contentMaxLength := 1000
+
+	if len(f.Content) > contentMaxLength {
+		validation.Add("content", p.Sprintf("The content should be less than %d characters", contentMaxLength))
 	}
 
 	return validation
@@ -1031,7 +1035,7 @@ func TopicContentEdit(props TopicContentEditProps) templ.Component {
 		var templ_7745c5c3_Var38 string
 		templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(i18n.T(ctx, "Discard unsaved changes ?"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 302, Col: 124}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 306, Col: 124}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 		if templ_7745c5c3_Err != nil {
@@ -1323,7 +1327,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 		var templ_7745c5c3_Var46 string
 		templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatBool(isExpanded))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 421, Col: 91}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 425, Col: 91}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 		if templ_7745c5c3_Err != nil {
@@ -1336,7 +1340,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 		var templ_7745c5c3_Var47 string
 		templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinStringErrs(props.Topic.ID.String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 421, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 425, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 		if templ_7745c5c3_Err != nil {
@@ -1354,7 +1358,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 			var templ_7745c5c3_Var48 string
 			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs("topic-" + props.Topic.ID.String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 426, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 430, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 			if templ_7745c5c3_Err != nil {
@@ -1367,7 +1371,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 			var templ_7745c5c3_Var49 string
 			templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.JoinStringErrs(props.Topic.ID.String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 426, Col: 117}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 430, Col: 117}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var49))
 			if templ_7745c5c3_Err != nil {
@@ -1380,7 +1384,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 			var templ_7745c5c3_Var50 string
 			templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.JoinStringErrs(props.Topic.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 427, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 431, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var50))
 			if templ_7745c5c3_Err != nil {
@@ -1398,7 +1402,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 			var templ_7745c5c3_Var51 string
 			templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.JoinStringErrs("topic-" + props.Topic.ID.String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 431, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 435, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var51))
 			if templ_7745c5c3_Err != nil {
@@ -1411,7 +1415,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 			var templ_7745c5c3_Var52 templ.SafeURL
 			templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinURLErrs(topicPage.WithPathParams(props.Topic.ID.String()).URL().String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 432, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 436, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 			if templ_7745c5c3_Err != nil {
@@ -1424,7 +1428,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 			var templ_7745c5c3_Var53 string
 			templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.JoinStringErrs(props.Topic.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 435, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 439, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var53))
 			if templ_7745c5c3_Err != nil {
@@ -1517,7 +1521,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 				var templ_7745c5c3_Var54 string
 				templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(childrenCount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 483, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 487, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var54))
 				if templ_7745c5c3_Err != nil {
@@ -1548,7 +1552,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 				var templ_7745c5c3_Var55 string
 				templ_7745c5c3_Var55, templ_7745c5c3_Err = templ.JoinStringErrs(i18n.T(ctx, "Delete this topic and its %d descendants ?", len(props.Descendants)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 493, Col: 102}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 497, Col: 102}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var55))
 				if templ_7745c5c3_Err != nil {
@@ -1566,7 +1570,7 @@ func TopicDescendantItem(props TopicDescendantItemProps) templ.Component {
 				var templ_7745c5c3_Var56 string
 				templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.JoinStringErrs(i18n.T(ctx, "Delete this topic ?"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 495, Col: 55}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 499, Col: 55}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var56))
 				if templ_7745c5c3_Err != nil {
@@ -1628,8 +1632,10 @@ func (f *TopicDescendantCreateForm) Validate(p *message.Printer) url.Values {
 		validation.Add("title", p.Sprintf("The title is required"))
 	}
 
-	if len(f.Title) > 50 {
-		validation.Add("title", p.Sprintf("The title should be less than %d characters", 50))
+	topicTitleMaxLength := 50
+
+	if len(f.Title) > topicTitleMaxLength {
+		validation.Add("title", p.Sprintf("The title should be less than %d characters", topicTitleMaxLength))
 	}
 
 	return validation
@@ -1692,7 +1698,7 @@ func TopicDescendantCreate(props TopicDescendantCreateProps) templ.Component {
 			var templ_7745c5c3_Var59 string
 			templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.JoinStringErrs(props.Form.Data.ParentID.String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 572, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/topic.templ`, Line: 578, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var59))
 			if templ_7745c5c3_Err != nil {

@@ -62,8 +62,10 @@ func (f *HomeProjectCreateForm) Validate(p *message.Printer) url.Values {
 		validation.Add("name", p.Sprintf("The name is required"))
 	}
 
-	if len(f.Name) > 50 {
-		validation.Add("name", p.Sprintf("The name should be less than %d characters", 50))
+	projectNameMaxLength := 50
+
+	if len(f.Name) > projectNameMaxLength {
+		validation.Add("name", p.Sprintf("The name should be less than %d characters", projectNameMaxLength))
 	}
 
 	return validation

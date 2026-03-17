@@ -293,8 +293,10 @@ func (f ProfileInfoEditForm) Validate(p *message.Printer) url.Values {
 		validation.Add("username", p.Sprintf("The username is required"))
 	}
 
-	if len(f.Username) > 30 {
-		validation.Add("username", p.Sprintf("The username should be less than %d characters", 30))
+	usernameMaxLength := 30
+
+	if len(f.Username) > usernameMaxLength {
+		validation.Add("username", p.Sprintf("The username should be less than %d characters", usernameMaxLength))
 	}
 
 	return validation
@@ -343,7 +345,7 @@ func ProfileInfoEdit(props ProfileInfoEditProps) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(i18n.T(ctx, "Discard unsaved changes ?"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/profile.templ`, Line: 92, Col: 124}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/profile.templ`, Line: 94, Col: 124}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {

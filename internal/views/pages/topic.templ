@@ -160,8 +160,10 @@ func (f *TopicInfoEditForm) Validate(p *message.Printer) url.Values {
 		validation.Add("title", p.Sprintf("The title is required"))
 	}
 
-	if len(f.Title) > 50 {
-		validation.Add("title", p.Sprintf("The title should be less than %d characters", 50))
+	topicTitleMaxLength := 50
+
+	if len(f.Title) > topicTitleMaxLength {
+		validation.Add("title", p.Sprintf("The title should be less than %d characters", topicTitleMaxLength))
 	}
 
 	return validation
@@ -282,8 +284,10 @@ func (f *TopicContentEditForm) Parse(r *http.Request) {
 func (f *TopicContentEditForm) Validate(p *message.Printer) url.Values {
 	validation := url.Values{}
 
-	if len(f.Content) > 1000 {
-		validation.Add("content", p.Sprintf("The content should be less than %d characters", 1000))
+	contentMaxLength := 1000
+
+	if len(f.Content) > contentMaxLength {
+		validation.Add("content", p.Sprintf("The content should be less than %d characters", contentMaxLength))
 	}
 
 	return validation
@@ -535,8 +539,10 @@ func (f *TopicDescendantCreateForm) Validate(p *message.Printer) url.Values {
 		validation.Add("title", p.Sprintf("The title is required"))
 	}
 
-	if len(f.Title) > 50 {
-		validation.Add("title", p.Sprintf("The title should be less than %d characters", 50))
+	topicTitleMaxLength := 50
+
+	if len(f.Title) > topicTitleMaxLength {
+		validation.Add("title", p.Sprintf("The title should be less than %d characters", topicTitleMaxLength))
 	}
 
 	return validation
