@@ -20,6 +20,17 @@ orm:
 templ:
 	go tool templ generate
 
+.PHONY: css
+css:
+	podman run --rm \
+		-v $(PWD)/web/static/css:/css:rw \
+		-w /home/node node:24-alpine \
+		sh -c 'echo "module.exports = { plugins: { '\''postcss-import'\'': {}, '\''postcss-nesting'\'': {}, '\''postcss-flexbugs-fixes'\'': {}, '\''autoprefixer'\'': {} } };" > postcss.config.js && \
+		cp /css/* . 2>/dev/null; \
+		npm install postcss postcss-cli postcss-import postcss-nesting postcss-flexbugs-fixes autoprefixer && \
+		./node_modules/.bin/postcss main.css -o main.compat.css && \
+		cp main.compat.css /css/'
+
 .PHONY: build
 build: orm templ
 	go build -o .build/bin/server cmd/server/main.go

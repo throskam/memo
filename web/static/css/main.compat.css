@@ -1,0 +1,382 @@
+:root {
+  --pico-font-size: 87.5%;
+  --pico-line-height: 1.25;
+  --pico-form-element-spacing-vertical: 0.5rem;
+  --pico-form-element-spacing-horizontal: 1.0rem;
+  --pico-border-radius: 0.375rem;
+}
+
+@media (min-width: 576px) {
+  :root {
+    --pico-font-size: 87.5%;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --pico-font-size: 87.5%;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --pico-font-size: 87.5%;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --pico-font-size: 87.5%;
+  }
+}
+
+@media (min-width: 1536px) {
+  :root {
+    --pico-font-size: 87.5%;
+  }
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex-grow: 1;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  --pico-font-weight: 600;
+}
+
+article {
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: calc(var(--pico-border-radius) * 2);
+}
+
+article>footer {
+  border-radius: calc(var(--pico-border-radius) * 2);
+}
+
+textarea {
+  field-sizing: content;
+}
+
+.material-icons {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.visibly-hidden {
+  display: none;
+}
+
+.home-container {
+  display: grid;
+  grid: auto max-content auto / 1fr;
+}
+
+.home-container > ul {
+    padding: 0;
+  }
+
+:is(.home-container > ul) li {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+      margin-bottom: 0;
+    }
+
+:is(:is(.home-container > ul) li) a,:is(:is(.home-container > ul) li) a:hover,:is(:is(.home-container > ul) li) a:active,:is(:is(.home-container > ul) li) a:focus {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        align-content: center;
+        --pico-text-decoration: initial;
+        --pico-color: initial;
+
+      }
+
+:is(:is(.home-container > ul) li):hover {
+        background-color: var(--pico-card-sectioning-background-color);
+        border-radius: var(--pico-border-radius)
+      }
+
+:is(:is(.home-container > ul) li) [role="group"] {
+        margin-bottom: 0;
+      }
+
+/* focus */
+
+:is(:is(.home-container > ul) li):has(a:focus-visible),:is(:is(.home-container > ul) li):has(a:focus) {
+        background-color: var(--pico-card-sectioning-background-color);
+        border-radius: var(--pico-border-radius);
+        box-shadow: 0 0 var(--pico-outline-width) var(--pico-primary-focus);
+
+        /* remove ugly focus border */
+      }
+
+:is(:is(:is(.home-container > ul) li):has(a:focus-visible),:is(:is(.home-container > ul) li):has(a:focus)) a:focus-visible,:is(:is(:is(.home-container > ul) li):has(a:focus-visible),:is(:is(.home-container > ul) li):has(a:focus)) a:focus {
+          box-shadow: none;
+        }
+
+.login-method-list {
+  width: 80%;
+  height: 100%;
+  margin: auto;
+}
+
+.login-method-list p:has(a) {
+    text-align: center;
+  }
+
+.topic-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.topic-container .topic-toolbar {
+    align-self: end;
+    width: auto;
+  }
+
+/* fix creation form validation errors */
+
+:is(.topic-container .topic-list-create) fieldset + small {
+      color: var(--pico-del-color);
+    }
+
+.topic-container .topic-list {
+    display: flex;
+    flex-direction: column;
+    box-shadow: none;
+    padding: 0 0 0 10px;
+    border-left: var(--pico-color) inset 1px;
+    border-radius: 0;
+    margin-bottom: 0;
+
+    /* root */
+  }
+
+[role="tree"]:is(.topic-container .topic-list) {
+      margin-bottom: revert;
+    }
+
+:is(.topic-container .topic-list) .even {
+      background-color: var(--pico-background-color)
+    }
+
+:is(.topic-container .topic-list) .odd {
+      background-color: var(--pico-table-row-stripped-background-color)
+    }
+
+:is(.topic-container .topic-list) .topic-list-item {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+
+      /* toggle nested list */
+    }
+
+[aria-expanded="false"]:is(:is(.topic-container .topic-list) .topic-list-item) > .topic-list {
+        display: none;
+      }
+
+:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line {
+        position: relative;
+      }
+
+:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content {
+        display: flex;
+        align-items: center;
+        padding: 5px;
+
+        /* link */
+      }
+
+:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content) a {
+          display: inline-block;
+          width: 100%;
+          align-self: stretch;
+          align-content: center;
+          --pico-text-decoration: initial;
+          --pico-color: initial;
+        }
+
+:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content) label {
+          display: inline-block;
+          width: 100%;
+          align-self: stretch;
+          align-content: center;
+          margin: auto;
+        }
+
+/* actions */
+
+:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content) div[role="group"] {
+          margin-bottom: 0;
+          box-shadow: none;
+          justify-content: flex-end;
+        }
+
+:is(:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content) div[role="group"]) button {
+            --pico-form-element-spacing-horizontal: 1rem;
+            flex: 0 1 auto;
+          }
+
+:is(:is(:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content) div[role="group"]) button) i {
+              display: inline;
+
+            }
+
+/* mouse over */
+
+:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):hover {
+          background-color: var(--pico-card-sectioning-background-color);
+          border-radius: var(--pico-border-radius);
+        }
+
+/* focus */
+
+:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(a:focus-visible),:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(a:focus),:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(input[type="checkbox"]:focus-visible),:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(input[type="checkbox"]:focus) {
+          background-color: var(--pico-card-sectioning-background-color);
+          border-radius: var(--pico-border-radius);
+          box-shadow: 0 0 var(--pico-outline-width) var(--pico-primary-focus);
+
+          /* remove ugly focus border */
+        }
+
+:is(:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(a:focus-visible),:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(a:focus),:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(input[type="checkbox"]:focus-visible),:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(input[type="checkbox"]:focus)) a:focus-visible,:is(:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(a:focus-visible),:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(a:focus),:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(input[type="checkbox"]:focus-visible),:is(:is(:is(.topic-container .topic-list) .topic-list-item) .topic-list-item-line-content):has(input[type="checkbox"]:focus)) a:focus {
+            box-shadow: none;
+          }
+
+.hidden {
+  display: none;
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+#notifications {
+  display: flex;
+  flex-direction: column;
+}
+
+:is(#notifications article) header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+
+:is(#notifications article) button {
+      padding: .25em;
+      border-radius: 20px;
+    }
+
+.alert:is(#notifications article) header {
+        background-color: #af291d;
+        color: white;
+      }
+
+.navbar button {
+    margin-bottom: 0;
+  }
+
+.card header {
+    display: flex;
+    align-items: center;
+  }
+
+:is(.card header) p {
+      flex: 1 1 auto;
+      margin-bottom: 0;
+      padding: 7px 0;
+    }
+
+:is(.card header) [role=group] {
+      flex: 0 1 auto;
+      margin-bottom: 0;
+      justify-content: flex-end;
+      width: auto;
+    }
+
+:is(:is(.card header) [role=group]) button {
+        flex: 0 1 auto;
+      }
+
+.card:has( > header:only-child) {
+    padding-bottom: 0;
+  }
+
+.card:has( > header:only-child) header {
+      margin-bottom: 0;
+      border-radius: var(--pico-border-radius);
+    }
+
+dl {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) minmax(auto, 2fr);
+  align-items: center;
+}
+
+dl dt {
+    grid-column-start: 1;
+    padding: 15px 0;
+  }
+
+dl dd {
+    grid-column-start: 2;
+    margin: 0;
+  }
+
+:is(dl dd) input:not([aria-invalid=true]) {
+      margin-bottom: 0;
+    }
+
+:is(dl dd) small {
+      margin-bottom: 0;
+    }
+
+dl dd:nth-of-type(even),dl dt:nth-of-type(even) {
+    background-color: var(--table-row-stripped-background-color);
+  }
+
+.description-list-item-wide {
+  display: contents;
+}
+
+.description-list-item-wide dt {
+    grid-column-start: 1;
+    grid-column-end: -1;
+    padding: 15px 0;
+  }
+
+.description-list-item-wide dd {
+    grid-column-start: 1;
+    grid-column-end: -1;
+    margin: 0;
+  }
+
+.markdown,
+#editor {
+  min-height: 100px;
+  padding: 10px;
+  border-radius: var(--pico-border-radius);
+  background-color: var(--pico-code-background-color);
+}
