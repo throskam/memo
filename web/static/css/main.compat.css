@@ -141,6 +141,10 @@ textarea {
     text-align: center;
   }
 
+fieldset[role="group"] button {
+  white-space: nowrap;
+}
+
 .topic-container {
   display: flex;
   flex-direction: column;
